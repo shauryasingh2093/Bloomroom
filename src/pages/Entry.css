@@ -1,0 +1,87 @@
+/* ================================
+   ENTRY SCREEN STYLES
+   Calming, minimal, welcoming
+   ================================ */
+
+.entry-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--cream-50) 0%, var(--sage-50) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 800ms var(--ease-gentle);
+}
+
+.entry-screen.visible {
+    opacity: 1;
+}
+
+.entry-content {
+    text-align: center;
+    padding: var(--space-8);
+    max-width: 500px;
+}
+
+.entry-symbol {
+    font-size: 4rem;
+    margin-bottom: var(--space-6);
+    animation: breathe 3s ease-in-out infinite;
+}
+
+.entry-title {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-light);
+    color: var(--sage-700);
+    margin-bottom: var(--space-3);
+    letter-spacing: 0.05em;
+    text-transform: lowercase;
+}
+
+.entry-subtitle {
+    font-size: var(--font-size-lg);
+    color: var(--text-secondary);
+    font-weight: var(--font-weight-light);
+    margin-bottom: var(--space-10);
+    line-height: var(--line-height-relaxed);
+}
+
+.entry-button {
+    padding: var(--space-4) var(--space-8);
+    background-color: transparent;
+    color: var(--sage-600);
+    border: 1.5px solid var(--sage-400);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all var(--transition-gentle);
+}
+
+.entry-button:hover {
+    background-color: var(--sage-500);
+    color: var(--white);
+    border-color: var(--sage-500);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(125, 176, 125, 0.2);
+}
+
+@media (max-width: 640px) {
+    .entry-symbol {
+        font-size: 3rem;
+    }
+
+    .entry-title {
+        font-size: var(--font-size-3xl);
+    }
+
+    .entry-subtitle {
+        font-size: var(--font-size-base);
+    }
+}

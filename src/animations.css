@@ -1,0 +1,323 @@
+/* ================================
+   BLOOMROOM ANIMATIONS
+   Gentle, calming animations
+   ================================ */
+
+/* ===== BLOOM ANIMATION (for completed tasks) ===== */
+@keyframes bloom {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.bloom {
+    animation: bloom 500ms cubic-bezier(0.4, 0, 0.1, 1);
+}
+
+/* ===== BLOOM PETALS (decorative effect) ===== */
+@keyframes bloomPetals {
+    0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.5) rotate(180deg);
+        opacity: 0;
+    }
+}
+
+.bloom-petals {
+    animation: bloomPetals 800ms cubic-bezier(0.4, 0, 0.1, 1);
+}
+
+/* ===== GENTLE FADE IN ===== */
+@keyframes gentleFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.gentle-fade-in {
+    animation: gentleFadeIn 500ms cubic-bezier(0.4, 0, 0.1, 1);
+}
+
+/* ===== SLIDE IN FROM BOTTOM ===== */
+@keyframes slideInBottom {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slide-in-bottom {
+    animation: slideInBottom 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== BREATHING PULSE (subtle) ===== */
+@keyframes breathe {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.02);
+        opacity: 0.95;
+    }
+}
+
+.breathe {
+    animation: breathe 3s ease-in-out infinite;
+}
+
+/* ===== GENTLE PULSE ===== */
+@keyframes gentlePulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.gentle-pulse {
+    animation: gentlePulse 2s ease-in-out infinite;
+}
+
+/* ===== SOFT GLOW ===== */
+@keyframes softGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(125, 176, 125, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(125, 176, 125, 0.4);
+    }
+}
+
+.soft-glow {
+    animation: softGlow 2s ease-in-out infinite;
+}
+
+/* ===== SHIMMER (for loading states) ===== */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.shimmer {
+    background: linear-gradient(90deg,
+            var(--gray-100) 0%,
+            var(--gray-200) 50%,
+            var(--gray-100) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ===== FLOAT (gentle up and down) ===== */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.float {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* ===== SCALE IN ===== */
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.scale-in {
+    animation: scaleIn 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== FADE OUT ===== */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.fade-out {
+    animation: fadeOut 300ms cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* ===== SLIDE OUT TO RIGHT ===== */
+@keyframes slideOutRight {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+.slide-out-right {
+    animation: slideOutRight 300ms cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* ===== CONFETTI BURST (for celebrations) ===== */
+@keyframes confettiBurst {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.confetti-burst {
+    animation: confettiBurst 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== STAGGER CHILDREN (for lists) ===== */
+.stagger-children>* {
+    animation: gentleFadeIn 400ms cubic-bezier(0.4, 0, 0.1, 1);
+    animation-fill-mode: backwards;
+}
+
+.stagger-children>*:nth-child(1) {
+    animation-delay: 0ms;
+}
+
+.stagger-children>*:nth-child(2) {
+    animation-delay: 50ms;
+}
+
+.stagger-children>*:nth-child(3) {
+    animation-delay: 100ms;
+}
+
+.stagger-children>*:nth-child(4) {
+    animation-delay: 150ms;
+}
+
+.stagger-children>*:nth-child(5) {
+    animation-delay: 200ms;
+}
+
+.stagger-children>*:nth-child(6) {
+    animation-delay: 250ms;
+}
+
+.stagger-children>*:nth-child(7) {
+    animation-delay: 300ms;
+}
+
+.stagger-children>*:nth-child(8) {
+    animation-delay: 350ms;
+}
+
+.stagger-children>*:nth-child(9) {
+    animation-delay: 400ms;
+}
+
+.stagger-children>*:nth-child(10) {
+    animation-delay: 450ms;
+}
+
+/* ===== TRANSITION UTILITIES ===== */
+.transition-all {
+    transition: all var(--transition-base);
+}
+
+.transition-colors {
+    transition: background-color var(--transition-base),
+        border-color var(--transition-base),
+        color var(--transition-base);
+}
+
+.transition-transform {
+    transition: transform var(--transition-base);
+}
+
+.transition-opacity {
+    transition: opacity var(--transition-base);
+}
+
+/* ===== HOVER EFFECTS ===== */
+.hover-lift {
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.hover-scale {
+    transition: transform var(--transition-base);
+}
+
+.hover-scale:hover {
+    transform: scale(1.02);
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 20px rgba(125, 176, 125, 0.3);
+}
