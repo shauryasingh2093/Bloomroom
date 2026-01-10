@@ -36,11 +36,10 @@ export default function VideoOpening({ onEnter }) {
     const handleVideoEnd = () => {
         // When entering_house.mp4 ends, transition to main app
         if (currentVideo === 'entering') {
-            setTimeout(() => {
-                onEnter();
-            }, 500);
+            onEnter();
         }
     };
+
 
     return (
         <motion.div

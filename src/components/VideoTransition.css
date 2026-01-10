@@ -1,0 +1,156 @@
+/* ================================
+   VIDEO TRANSITION STYLES
+   Full-screen video transitions
+   ================================ */
+
+.video-transition-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 600ms ease-in-out;
+}
+
+.video-transition-overlay.active {
+    opacity: 1;
+}
+
+.video-transition-overlay.fading-out {
+    opacity: 0;
+}
+
+/* Video element */
+.transition-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Fallback placeholder when video is not available */
+.video-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--fallback-color, #f5e6d3) 0%, var(--fallback-color-dark, #e8d4c0) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animated gradient overlay */
+.video-fallback::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+    animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.fallback-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: var(--space-8);
+}
+
+.fallback-icon {
+    font-size: 4rem;
+    margin-bottom: var(--space-4);
+    animation: float 3s ease-in-out infinite;
+}
+
+.fallback-title {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-light);
+    color: rgba(0, 0, 0, 0.7);
+    margin-bottom: var(--space-2);
+    letter-spacing: 0.05em;
+}
+
+.fallback-description {
+    font-size: var(--font-size-lg);
+    color: rgba(0, 0, 0, 0.5);
+    font-weight: var(--font-weight-light);
+}
+
+/* Skip button */
+.skip-transition-btn {
+    position: absolute;
+    bottom: var(--space-8);
+    right: var(--space-8);
+    padding: var(--space-3) var(--space-6);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-full);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 300ms ease;
+    z-index: 10;
+}
+
+.skip-transition-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Loading state */
+.video-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: var(--font-size-lg);
+    z-index: 5;
+}
+
+/* Animations */
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 600ms ease-in-out forwards;
+}

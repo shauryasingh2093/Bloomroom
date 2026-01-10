@@ -1,10 +1,71 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-sage-50: #f0f5f0;
+  --color-sage-100: #e0ebe0;
+  --color-sage-200: #c1d7c1;
+  --color-sage-300: #a2c3a2;
+  --color-sage-400: #83af83;
+  --color-sage-500: #7db07d;
+  --color-sage-600: #6a9a6a;
+  --color-sage-700: #578357;
+  --color-sage-800: #446d44;
+  --color-sage-900: #315631;
+
+  --color-blush-50: #fff5f7;
+  --color-blush-100: #ffe8ee;
+  --color-blush-200: #ffd1dd;
+  --color-blush-300: #ffbacc;
+  --color-blush-400: #ffa3bb;
+  --color-blush-500: #ff8caa;
+  --color-blush-600: #f5a0b8;
+  --color-blush-700: #e88ca4;
+  --color-blush-800: #d47890;
+  --color-blush-900: #c0647c;
+
+  --color-peach-50: #fff8f5;
+  --color-peach-100: #ffe8e0;
+  --color-peach-200: #ffd1c1;
+  --color-peach-300: #ffbaa2;
+  --color-peach-400: #ffa383;
+  --color-peach-500: #ff8c64;
+
+  --color-cream-50: #fefefe;
+  --color-cream-100: #faf8f5;
+  --color-cream-200: #f5f1ec;
+  --color-cream-300: #f0eae3;
+  --color-cream-400: #ebe3da;
+  --color-cream-500: #e6dcd1;
+
+  --color-care-dusk: #596C7D;
+  --color-calm-dusk: #818A7F;
+  --color-memory-dusk: #CAA188;
+  --color-planning-dusk: #8C7D86;
+  --color-future-dusk: #8E806A;
+
+  --font-sans: 'Inter', sans-serif;
+}
 
 @layer base {
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+  }
+
   body {
     @apply font-sans bg-cream-100 text-slate-800 antialiased;
+  }
+
+  #root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
   }
 }
 

@@ -26,35 +26,28 @@ export const useApp = () => {
 
 export const AppProvider = ({ children }) => {
     // Tasks state
-    const [tasks, setTasks] = useState([]);
+    const [tasks, setTasks] = useState(() => loadTasks());
 
     // Goals state
-    const [goals, setGoals] = useState([]);
+    const [goals, setGoals] = useState(() => loadGoals());
 
     // Mind dumps state
-    const [mindDumps, setMindDumps] = useState([]);
+    const [mindDumps, setMindDumps] = useState(() => loadMindDumps());
 
     // Documentation state
-    const [documentation, setDocumentation] = useState([]);
+    const [documentation, setDocumentation] = useState(() => loadDocumentation());
 
     // Self care state
-    const [selfCare, setSelfCare] = useState({});
+    const [selfCare, setSelfCare] = useState(() => loadSelfCare());
 
     // Streak state
-    const [streak, setStreak] = useState({ count: 0, lastDate: null, pausedUntil: null });
+    const [streak, setStreak] = useState(() => loadStreak());
 
     // Preferences state
-    const [preferences, setPreferences] = useState({});
+    const [preferences, setPreferences] = useState(() => loadPreferences());
 
-    // Load all data on mount
+    // Load visit on mount
     useEffect(() => {
-        setTasks(loadTasks());
-        setGoals(loadGoals());
-        setMindDumps(loadMindDumps());
-        setDocumentation(loadDocumentation());
-        setSelfCare(loadSelfCare());
-        setStreak(loadStreak());
-        setPreferences(loadPreferences());
         saveLastVisit();
     }, []);
 

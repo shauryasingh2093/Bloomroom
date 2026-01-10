@@ -1,53 +1,71 @@
 import { useState } from 'react';
 import { AppProvider } from './context/AppContext';
-import SplineScene from './components/SplineScene';
-import RoomOverlay from './components/RoomOverlay';
 import VideoOpening from './components/VideoOpening';
+import MainHall from './pages/MainHall';
+import PlanningRoom from './pages/PlanningRoom';
+import CalmRoom from './pages/CalmRoom';
+import FutureRoom from './pages/FutureRoom';
+import CareRoom from './pages/CareRoom';
+import MemoryCorner from './pages/MemoryCorner';
+import VideoTransition from './components/VideoTransition';
 
 function App() {
-  const [showVideo, setShowVideo] = useState(true);
-  const [currentRoom, setCurrentRoom] = useState(null);
-
-  // Spline scene URL (update this after you build and export your Spline scene)
-  const splineUrl = "https://prod.spline.design/your-spline-url-here/scene.splinecode"; // Placeholder
+  const [appState, setAppState] = useState('intro'); // 'intro', 'main-hall'
+  const [currentRoom, setCurrentRoom] = useState(null); // 'planning', 'calm', 'future', 'care', 'memory', null
+  const [transitionRoom, setTransitionRoom] = useState(null);
 
   const handleEnterBloomroom = () => {
-    setShowVideo(false);
+    setAppState('main-hall');
   };
 
-  const handleRoomEnter = (roomName) => {
-    setCurrentRoom(roomName);
+  const handleEnterRoom = (room) => {
+    setTransitionRoom(room);
   };
 
-  const handleRoomExit = () => {
+  const handleExitRoom = () => {
     setCurrentRoom(null);
+  };
+
+  const handleTransitionComplete = () => {
+    setCurrentRoom(transitionRoom);
+    setTransitionRoom(null);
+  };
+
+  // Render logic for different rooms
+  const renderRoom = () => {
+    if (transitionRoom) {
+      return (
+        <VideoTransition
+          roomId={transitionRoom}
+          isActive={true}
+          onComplete={handleTransitionComplete}
+        />
+      );
+    }
+
+    switch (currentRoom) {
+      case 'planning': return <PlanningRoom onBack={handleExitRoom} />;
+      case 'calm': return <CalmRoom onBack={handleExitRoom} />;
+      case 'future': return <FutureRoom onBack={handleExitRoom} />;
+      case 'care': return <CareRoom onBack={handleExitRoom} />;
+      case 'memory': return <MemoryCorner onBack={handleExitRoom} />;
+      default: return <MainHall onEnterRoom={handleEnterRoom} />;
+    }
   };
 
   return (
     <AppProvider>
-      <div className="relative min-h-screen bg-cream-100 overflow-hidden font-sans">
+      <div className="fixed inset-0 w-screen h-screen bg-cream-100 overflow-hidden font-sans">
         {/* Cinematic Layers */}
-        <div className="fixed inset-0 pointer-events-none z-50">
+        <div className="fixed inset-0 pointer-events-none z-[2000]">
           <div className="cinematic-grain" />
           <div className="warm-overlay" />
         </div>
 
-        {showVideo && (
+        {appState === 'intro' ? (
           <VideoOpening onEnter={handleEnterBloomroom} />
-        )}
-
-        {!showVideo && (
-          <div className="animate-fade-in">
-            <SplineScene
-              onRoomEnter={handleRoomEnter}
-              currentRoom={currentRoom}
-              splineUrl={splineUrl}
-            />
-            <RoomOverlay
-              room={currentRoom}
-              onExit={handleRoomExit}
-            />
-          </div>
+        ) : (
+          renderRoom()
         )}
       </div>
     </AppProvider>
@@ -55,3 +73,4 @@ function App() {
 }
 
 export default App;
+
