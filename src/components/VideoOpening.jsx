@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+// eslint-disable-next-line no-unused-vars
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function VideoOpening({ onEnter }) {
     const [currentVideo, setCurrentVideo] = useState('opening'); // 'opening' or 'entering'

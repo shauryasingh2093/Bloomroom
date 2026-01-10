@@ -5,23 +5,29 @@ import Card from './Card';
 import './DailyFocus.css';
 
 const DailyFocus = () => {
-    const [question, setQuestion] = useState('');
-    const [response, setResponse] = useState('');
-    const [saved, setSaved] = useState(false);
-
-    useEffect(() => {
-        setQuestion(getQuestionByTime());
-
-        // Load saved response from localStorage
+    const [question] = useState(() => getQuestionByTime());
+    const [response, setResponse] = useState(() => {
         const today = new Date().toDateString();
         const savedData = localStorage.getItem('dailyFocus');
         if (savedData) {
             const parsed = JSON.parse(savedData);
-            if (parsed.date === today) {
-                setResponse(parsed.response);
-                setSaved(true);
-            }
+            if (parsed.date === today) return parsed.response;
         }
+        return '';
+    });
+
+    const [saved, setSaved] = useState(() => {
+        const today = new Date().toDateString();
+        const savedData = localStorage.getItem('dailyFocus');
+        if (savedData) {
+            const parsed = JSON.parse(savedData);
+            return parsed.date === today;
+        }
+        return false;
+    });
+
+    useEffect(() => {
+        // Visit saved implicitly by state initializers
     }, []);
 
     const handleSave = () => {

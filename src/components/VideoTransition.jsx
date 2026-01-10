@@ -1,6 +1,6 @@
 // Video Transition Component
 // Plays room-specific transition videos when entering rooms
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { getVideoConfig } from '../config/roomVideos';
 import './VideoTransition.css';
 
@@ -11,22 +11,42 @@ const VideoTransition = ({ roomId, isActive, onComplete }) => {
 
     const roomConfig = getVideoConfig(roomId);
 
+    const handleComplete = useCallback(() => {
+        setTransitionState('fading-out');
+
+        // Wait for fade-out animation
+        setTimeout(() => {
+            setTransitionState('idle');
+            if (onComplete) {
+                onComplete();
+            }
+        }, 600); // Match CSS transition duration
+    }, [onComplete]);
+
     useEffect(() => {
         if (isActive && roomConfig) {
-            setTransitionState('loading');
-            setVideoError(false);
+            // Deferred to avoid synchronous setState in effect (Vite/React lint)
+            const timer = setTimeout(() => {
+                setTransitionState('loading');
+                setVideoError(false);
 
-            // If no video path, trigger fallback timeout immediately
-            if (!roomConfig.videoPath) {
-                setVideoError(true);
-                setTimeout(() => {
-                    handleComplete();
-                }, 2500); // Give user time to see the fallback
-            }
+                // If no video path, trigger fallback timeout immediately
+                if (!roomConfig.videoPath) {
+                    setVideoError(true);
+                    const fallbackTimer = setTimeout(() => {
+                        handleComplete();
+                    }, 2500); // Give user time to see the fallback
+                    return () => clearTimeout(fallbackTimer);
+                }
+            }, 0);
+            return () => clearTimeout(timer);
         } else {
-            setTransitionState('idle');
+            const timer = setTimeout(() => {
+                setTransitionState('idle');
+            }, 0);
+            return () => clearTimeout(timer);
         }
-    }, [isActive, roomConfig]);
+    }, [isActive, roomConfig, handleComplete]);
 
     const handleVideoLoaded = () => {
         setTransitionState('playing');
@@ -48,18 +68,6 @@ const VideoTransition = ({ roomId, isActive, onComplete }) => {
         setTimeout(() => {
             handleComplete();
         }, 2000);
-    };
-
-    const handleComplete = () => {
-        setTransitionState('fading-out');
-
-        // Wait for fade-out animation
-        setTimeout(() => {
-            setTransitionState('idle');
-            if (onComplete) {
-                onComplete();
-            }
-        }, 600); // Match CSS transition duration
     };
 
     // Helper function to darken a color

@@ -1,7 +1,8 @@
 // Global Context for Bloomroom
 // Manages all application state
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { AppContext } from './appContextCore';
 import {
     loadTasks, saveTasks,
     loadGoals, saveGoals,
@@ -14,15 +15,7 @@ import {
 } from '../utils/storage';
 import { calculateStreak, getTodayString } from '../utils/dateHelpers';
 
-export const AppContext = createContext();
 
-export const useApp = () => {
-    const context = useContext(AppContext);
-    if (!context) {
-        throw new Error('useApp must be used within AppProvider');
-    }
-    return context;
-};
 
 export const AppProvider = ({ children }) => {
     // Tasks state

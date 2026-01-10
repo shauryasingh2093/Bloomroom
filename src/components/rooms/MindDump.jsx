@@ -1,4 +1,9 @@
+import { useState } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
+import { useApp } from '../../context/appContextCore';
+import { getAIResponse, formatAIResponse } from '../../utils/aiResponses';
+import Button from '../Button';
 
 const MindDump = ({ lightText = false }) => {
     const { addMindDump, mindDumps } = useApp();
@@ -6,7 +11,6 @@ const MindDump = ({ lightText = false }) => {
     const [currentResponse, setCurrentResponse] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
 
-    const textColor = lightText ? 'text-cream-50' : 'text-slate-800';
     const subTextColor = lightText ? 'text-cream-200/60' : 'text-slate-500';
 
     const handleSubmit = (e) => {

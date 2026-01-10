@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/appContextCore';
 import { getContextualEncouragement } from '../../utils/encouragement';
 
 const TaskItem = ({ task, lightText = false }) => {
@@ -11,7 +11,6 @@ const TaskItem = ({ task, lightText = false }) => {
     const [isAnimating, setIsAnimating] = useState(false);
 
     const textColor = lightText ? 'text-cream-50' : 'text-slate-800';
-    const subTextColor = lightText ? 'text-cream-200/60' : 'text-slate-500';
 
     const handleComplete = () => {
         if (task.completed) {

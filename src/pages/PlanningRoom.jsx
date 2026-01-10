@@ -27,15 +27,15 @@ const PlanningRoom = ({ onBack }) => {
                     </div>
 
                     <div className="lg:col-span-4 space-y-8">
-                        <section className="p-8 rounded-3xl bg-white/10 backdrop-blur-md border border-white/20">
+                        <section className="p-8 rounded-[2rem] bg-white/10 backdrop-blur-md border border-white/20 shadow-sm">
                             <h4 className="text-xs tracking-[0.2em] uppercase font-light text-cream-200/40 mb-6">A Gentle Note</h4>
                             <p className="text-cream-100 font-light italic leading-relaxed">
                                 "One small thing is enough. You don't have to carry the whole world today. Just this moment, just these intentions."
                             </p>
-                            <p className="mt-4 text-xs tracking-widest text-cream-200/60 uppercase font-light">— Bloomroom AI</p>
+                            <p className="mt-4 text-[10px] tracking-widest text-cream-200/40 uppercase font-light text-right">— Bloomroom AI</p>
                         </section>
 
-                        <section className="p-8 rounded-3xl bg-white/5 backdrop-blur-md border border-white/10">
+                        <section className="p-8 rounded-[2rem] bg-white/5 backdrop-blur-md border border-white/10">
                             <h4 className="text-xs tracking-[0.2em] uppercase font-light text-cream-200/40 mb-6">Today's Wisdom</h4>
                             <p className="text-cream-100 font-light leading-relaxed">
                                 Growth is not always upwards. Sometimes it's deep into the roots.

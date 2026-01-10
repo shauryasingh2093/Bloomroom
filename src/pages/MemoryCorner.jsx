@@ -1,6 +1,6 @@
 import React from 'react';
 import RoomWrapper from '../components/RoomWrapper';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../context/appContextCore';
 
 const MemoryCorner = ({ onBack }) => {
     const { documentation, mindDumps } = useApp();

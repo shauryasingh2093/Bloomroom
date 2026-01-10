@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../context/appContextCore';
 import TaskItem from './TaskItem';
 import Input from '../Input';
 import Button from '../Button';

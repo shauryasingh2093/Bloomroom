@@ -1,4 +1,9 @@
+import { useState } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
+import { useApp } from '../../context/appContextCore';
+import Button from '../Button';
+import Input from '../Input';
 
 const GoalList = ({ lightText = false }) => {
     const { goals, addGoal, deleteGoal } = useApp();
