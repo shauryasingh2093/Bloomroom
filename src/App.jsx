@@ -45,37 +45,35 @@ function App() {
     setTransitionRoom(null);
   };
 
-  // Render logic for different rooms
   const renderRoom = () => {
     if (transitionRoom) {
-      return (
-        <VideoTransition
-          roomId={transitionRoom}
-          isActive={true}
-          onComplete={handleTransitionComplete}
-        />
-      );
+      return <VideoTransition roomId={transitionRoom} onComplete={handleTransitionComplete} />;
     }
 
     switch (currentRoom) {
-      case 'planning': return <PlanningRoom onBack={handleExitRoom} />;
-      case 'calm': return <CalmRoom onBack={handleExitRoom} />;
-      case 'future': return <FutureRoom onBack={handleExitRoom} />;
-      case 'care': return <CareRoom onBack={handleExitRoom} />;
-      case 'memory': return <MemoryCorner onBack={handleExitRoom} />;
-      default: return <MainHall onEnterRoom={handleEnterRoom} />;
+      case 'planning':
+        return <PlanningRoom onBack={handleExitRoom} />;
+      case 'calm':
+        return <CalmRoom onBack={handleExitRoom} />;
+      case 'future':
+        return <FutureRoom onBack={handleExitRoom} />;
+      case 'care':
+        return <CareRoom onBack={handleExitRoom} />;
+      case 'memory':
+        return <MemoryCorner onBack={handleExitRoom} />;
+      default:
+        return null;
     }
   };
 
   return (
-    <AppProvider>
+    <AppProvider profileId={currentProfile?.id}>
       {!currentProfile ? (
-        <ProfileSelector onProfileSelected={(profile) => setCurrentProfile(profile)} />
+        <ProfileSelector onProfileSelected={setCurrentProfile} />
       ) : (
-        <div className="fixed inset-0 w-screen h-screen bg-cream-100 overflow-hidden font-sans">
-          {/* Cinematic Layers */}
-          <div className="fixed inset-0 pointer-events-none z-[2000]">
-            <div className="cinematic-grain" />
+        <div className="app-container">
+          <div className="background-layers">
+            <div className="grain-overlay" />
             <div className="warm-overlay" />
           </div>
 
@@ -91,9 +89,7 @@ function App() {
             />
           )}
 
-          {(currentRoom || transitionRoom) && (
-            renderRoomContent()
-          )}
+          {(currentRoom || transitionRoom) && renderRoom()}
         </div>
       )}
     </AppProvider>
