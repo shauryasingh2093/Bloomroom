@@ -63,11 +63,11 @@ const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
             {/* Profile Button */}
             <button
                 onClick={() => setIsOpen(true)}
-                className="fixed top-6 right-6 z-50 flex items-center gap-3 px-5 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-xl rounded-full border border-white/30 transition-all group shadow-lg"
+                className="fixed top-4 right-4 sm:top-6 sm:right-6 z-50 flex items-center gap-2 sm:gap-3 px-3 sm:px-5 py-2 sm:py-3 bg-white/10 hover:bg-white/20 backdrop-blur-xl rounded-full border border-white/30 transition-all group shadow-lg"
             >
                 <div
                     style={getAvatarStyle(currentProfile?.avatarIndex || 0)}
-                    className="w-12 h-12 rounded-full flex-shrink-0 border-2 border-white/20"
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex-shrink-0 border-2 border-white/20"
                 />
                 <span className="text-sm text-white font-light hidden sm:block">{currentProfile?.name}</span>
                 <svg className="w-4 h-4 text-white/60 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
