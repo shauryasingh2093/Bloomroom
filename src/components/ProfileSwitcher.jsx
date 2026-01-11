@@ -11,19 +11,23 @@ const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
     const [editName, setEditName] = useState(currentProfile?.name || '');
     const [editAvatar, setEditAvatar] = useState(currentProfile?.avatarIndex || 0);
 
-    // Avatar positions in the sprite (6 avatars: 3 on top row, 3 on bottom row)
+    // Avatar images (6 individual files)
     const avatarCount = 6;
-    const getAvatarStyle = (index) => {
-        const col = index % 3; // 0, 1, 2
-        const row = Math.floor(index / 3); // 0 or 1
-        return {
-            backgroundImage: 'url(/images/avatar.png)',
-            backgroundSize: '300% 200%', // 3 columns, 2 rows
-            backgroundPosition: `${col * 50}% ${row * 100}%`,
-            backgroundRepeat: 'no-repeat',
-            imageRendering: 'crisp-edges',
-        };
-    };
+    const avatarImages = [
+        '/images/a1.png',
+        '/images/a2.png',
+        '/images/a3.png',
+        '/images/a4.png',
+        '/images/a5.png',
+        '/images/a6.png',
+    ];
+
+    const getAvatarStyle = (index) => ({
+        backgroundImage: `url(${avatarImages[index] || avatarImages[0]})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+    });
 
     const handleSwitch = (profileId) => {
         setActiveProfile(profileId);

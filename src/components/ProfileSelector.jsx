@@ -9,17 +9,21 @@ const ProfileSelector = ({ onProfileSelected }) => {
     const [selectedAvatar, setSelectedAvatar] = useState(0);
 
     const avatarCount = 6;
-    const getAvatarStyle = (index) => {
-        const col = index % 3; // 0, 1, 2
-        const row = Math.floor(index / 3); // 0 or 1
-        return {
-            backgroundImage: 'url(/images/avatar.png)',
-            backgroundSize: '300% 200%', // 3 columns, 2 rows
-            backgroundPosition: `${col * 50}% ${row * 100}%`,
-            backgroundRepeat: 'no-repeat',
-            imageRendering: 'crisp-edges',
-        };
-    };
+    const avatarImages = [
+        '/images/a1.png',
+        '/images/a2.png',
+        '/images/a3.png',
+        '/images/a4.png',
+        '/images/a5.png',
+        '/images/a6.png',
+    ];
+
+    const getAvatarStyle = (index) => ({
+        backgroundImage: `url(${avatarImages[index] || avatarImages[0]})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+    });
 
     const handleCreateProfile = (e) => {
         e.preventDefault();
