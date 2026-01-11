@@ -21,6 +21,7 @@ const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
             backgroundSize: '300% 200%', // 3 columns, 2 rows
             backgroundPosition: `${col * 50}% ${row * 100}%`,
             backgroundRepeat: 'no-repeat',
+            imageRendering: 'crisp-edges',
         };
     };
 
