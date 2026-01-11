@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../../context/appContextCore';
 import TaskItem from './TaskItem';
 import Input from '../Input';
@@ -48,18 +48,26 @@ const TaskList = ({ lightText = false }) => {
                 </Button>
             </form>
 
-            <div className="space-y-4">
-                {todaysTasks.length === 0 ? (
-                    <div className="py-20 text-center opacity-60">
-                        <div className="text-4xl mb-4">🌸</div>
-                        <p className={`${subTextColor} font-light tracking-wide italic`}>No intentions yet. What would make today feel okay?</p>
-                    </div>
-                ) : (
-                    todaysTasks.map((task) => (
-                        <TaskItem key={task.id} task={task} lightText={lightText} />
-                    ))
-                )}
-            </div>
+            <motion.div layout className="space-y-4">
+                <AnimatePresence mode="popLayout">
+                    {todaysTasks.length === 0 ? (
+                        <motion.div
+                            key="empty"
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="py-20 text-center opacity-60"
+                        >
+                            <div className="text-4xl mb-4">🌸</div>
+                            <p className={`${subTextColor} font-light tracking-wide italic`}>No intentions yet. What would make today feel okay?</p>
+                        </motion.div>
+                    ) : (
+                        todaysTasks.map((task) => (
+                            <TaskItem key={task.id} task={task} lightText={lightText} />
+                        ))
+                    )}
+                </AnimatePresence>
+            </motion.div>
 
             {completedCount > 0 && completedCount === totalCount && (
                 <div className={`mt-12 p-8 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 text-center animate-bloom`}>

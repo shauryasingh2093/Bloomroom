@@ -63,43 +63,53 @@ const GoalList = ({ lightText = false }) => {
                 )}
             </AnimatePresence>
 
-            <div className="space-y-6">
-                {goals.length === 0 ? (
-                    <div className="py-20 text-center opacity-40">
-                        <p className={`font-light italic ${lightText ? 'text-cream-100' : 'text-slate-500'}`}>No goals planted yet. This is a space for your "someday" dreams.</p>
-                    </div>
-                ) : (
-                    goals.map((goal) => (
+            <motion.div layout className="space-y-6">
+                <AnimatePresence mode="popLayout">
+                    {goals.length === 0 ? (
                         <motion.div
-                            key={goal.id}
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="bg-white/10 backdrop-blur-sm p-8 rounded-3xl border border-white/20 group hover:bg-white/15 transition-all duration-500 shadow-sm hover:shadow-md"
+                            key="empty"
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="py-20 text-center opacity-40"
                         >
-                            <div className="flex justify-between items-start">
-                                <div>
-                                    <h4 className={`text-xl font-light ${textColor} tracking-wide mb-2`}>{goal.title}</h4>
-                                    <p className={`${subTextColor} font-light leading-relaxed`}>{goal.description}</p>
-                                </div>
-                                <button
-                                    onClick={() => deleteGoal(goal.id)}
-                                    className={`opacity-0 group-hover:opacity-100 p-2 transition-all ${lightText ? 'text-white/40 hover:text-white' : 'text-slate-300 hover:text-red-400'}`}
-                                >
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <div className="mt-6 flex gap-4">
-                                <div className={`h-1 flex-1 ${lightText ? 'bg-white/10' : 'bg-slate-100'} rounded-full overflow-hidden`}>
-                                    <div className={`h-full ${lightText ? 'bg-white/30' : 'bg-slate-400/30'} w-1/3 rounded-full`} />
-                                </div>
-                                <span className={`text-[10px] tracking-widest uppercase ${lightText ? 'text-white/30' : 'text-slate-400'}`}>Growing slowly</span>
-                            </div>
+                            <p className={`font-light italic ${lightText ? 'text-cream-100' : 'text-slate-500'}`}>No goals planted yet. This is a space for your "someday" dreams.</p>
                         </motion.div>
-                    ))
-                )}
-            </div>
+                    ) : (
+                        goals.map((goal) => (
+                            <motion.div
+                                key={goal.id}
+                                layout
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                className="bg-white/10 backdrop-blur-sm p-8 rounded-3xl border border-white/20 group hover:bg-white/15 transition-all duration-500 shadow-sm hover:shadow-md"
+                            >
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <h4 className={`text-xl font-light ${textColor} tracking-wide mb-2`}>{goal.title}</h4>
+                                        <p className={`${subTextColor} font-light leading-relaxed`}>{goal.description}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => deleteGoal(goal.id)}
+                                        className={`opacity-0 group-hover:opacity-100 p-2 transition-all ${lightText ? 'text-white/40 hover:text-white' : 'text-slate-300 hover:text-red-400'}`}
+                                    >
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div className="mt-6 flex gap-4">
+                                    <div className={`h-1 flex-1 ${lightText ? 'bg-white/10' : 'bg-slate-100'} rounded-full overflow-hidden`}>
+                                        <div className={`h-full ${lightText ? 'bg-white/30' : 'bg-slate-400/30'} w-1/3 rounded-full`} />
+                                    </div>
+                                    <span className={`text-[10px] tracking-widest uppercase ${lightText ? 'text-white/30' : 'text-slate-400'}`}>Growing slowly</span>
+                                </div>
+                            </motion.div>
+                        ))
+                    )}
+                </AnimatePresence>
+            </motion.div>
         </div>
     );
 };

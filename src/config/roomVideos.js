@@ -12,7 +12,7 @@ export const roomVideos = {
     planning: {
         id: 'planning',
         name: 'Planning Room',
-        videoPath: '',
+        videoPath: '/videos/transitions/planning.mp4',
         fallbackColor: '#e8f4e8',
         description: 'Daily tasks & goals'
     },
@@ -26,7 +26,7 @@ export const roomVideos = {
     future: {
         id: 'future',
         name: 'Future Room',
-        videoPath: '',
+        videoPath: '/videos/transitions/Future_Room_Video_Generation (1).mp4',
         fallbackColor: '#faf8f5', // cream-100
         description: 'Dreams & growth'
     },

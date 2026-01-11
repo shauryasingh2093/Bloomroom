@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useApp } from '../../context/appContextCore';
 import { getContextualEncouragement } from '../../utils/encouragement';
 
@@ -63,7 +64,13 @@ const TaskItem = ({ task, lightText = false }) => {
     };
 
     return (
-        <div className={`group relative p-6 rounded-2xl transition-all duration-700 ${task.completed ? 'bg-white/5 opacity-60' : 'bg-white/10 hover:bg-white/15'} border border-white/20 backdrop-blur-md ${isAnimating ? 'scale-[1.02] shadow-xl ring-2 ring-white/10' : ''}`}>
+        <motion.div
+            layout
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            className={`group relative p-6 rounded-2xl transition-all duration-700 ${task.completed ? 'bg-white/5 opacity-60' : 'bg-white/10 hover:bg-white/15'} border border-white/20 backdrop-blur-md ${isAnimating ? 'scale-[1.02] shadow-xl ring-2 ring-white/10' : ''}`}
+        >
             <div className="flex items-center gap-6">
                 <button
                     onClick={handleComplete}
@@ -116,11 +123,16 @@ const TaskItem = ({ task, lightText = false }) => {
             </div>
 
             {showMessage && (
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap px-4 py-2 rounded-full bg-sage-600 text-white text-xs tracking-widest uppercase font-light shadow-lg animate-fade-in-up">
+                <motion.div
+                    initial={{ opacity: 0, y: 10, x: '-50%' }}
+                    animate={{ opacity: 1, y: 0, x: '-50%' }}
+                    exit={{ opacity: 0, y: -10, x: '-50%' }}
+                    className="absolute -top-8 left-1/2 whitespace-nowrap px-4 py-2 rounded-full bg-sage-600 text-white text-xs tracking-widest uppercase font-light shadow-lg"
+                >
                     {message}
-                </div>
+                </motion.div>
             )}
-        </div>
+        </motion.div>
     );
 };
 
