@@ -6,9 +6,17 @@ const ProfileSelector = ({ onProfileSelected }) => {
     const [profiles, setProfiles] = useState(getProfiles());
     const [isCreating, setIsCreating] = useState(false);
     const [newProfileName, setNewProfileName] = useState('');
-    const [selectedAvatar, setSelectedAvatar] = useState('🌸');
+    const [selectedAvatar, setSelectedAvatar] = useState(0);
 
-    const avatars = ['🌸', '🌺', '🌻', '🌷', '🌹', '🪷', '🌼', '💐', '🌿', '🍀', '🌱', '🌾'];
+    const avatarCount = 6;
+    const getAvatarStyle = (index) => ({
+        backgroundImage: 'url(/images/avatar.png)',
+        backgroundSize: `${avatarCount * 100}%`,
+        backgroundPosition: `${(index / (avatarCount - 1)) * 100}% 0`,
+        width: '64px',
+        height: '64px',
+        borderRadius: '50%',
+    });
 
     const handleCreateProfile = (e) => {
         e.preventDefault();
@@ -79,17 +87,17 @@ const ProfileSelector = ({ onProfileSelected }) => {
                             <div className="mb-8">
                                 <label className="block text-cream-200/60 text-xs tracking-widest uppercase mb-3">Choose Avatar</label>
                                 <div className="grid grid-cols-6 gap-3">
-                                    {avatars.map(avatar => (
+                                    {Array.from({ length: avatarCount }).map((_, idx) => (
                                         <button
-                                            key={avatar}
+                                            key={idx}
                                             type="button"
-                                            onClick={() => setSelectedAvatar(avatar)}
-                                            className={`text-3xl p-3 rounded-2xl transition-all ${selectedAvatar === avatar
-                                                ? 'bg-white/30 scale-110'
+                                            onClick={() => setSelectedAvatar(idx)}
+                                            className={`p-3 rounded-2xl transition-all ${selectedAvatar === idx
+                                                ? 'bg-white/30 scale-110 ring-2 ring-white/50'
                                                 : 'bg-white/5 hover:bg-white/10'
                                                 }`}
                                         >
-                                            {avatar}
+                                            <div style={getAvatarStyle(idx)} className="w-full h-auto aspect-square" />
                                         </button>
                                     ))}
                                 </div>
@@ -135,7 +143,7 @@ const ProfileSelector = ({ onProfileSelected }) => {
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
                                     </button>
-                                    <div className="text-5xl mb-4">{profile.avatar}</div>
+                                    <div style={getAvatarStyle(profile.avatarIndex || 0)} className="mx-auto mb-4" />
                                     <h3 className="text-xl font-light text-cream-50 mb-2">{profile.name}</h3>
                                     <p className="text-[10px] text-cream-200/40 tracking-widest uppercase">
                                         Last active: {new Date(profile.lastActive).toLocaleDateString()}

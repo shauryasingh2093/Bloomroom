@@ -7,9 +7,18 @@ const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
     const [profiles, setProfiles] = useState(getProfiles());
     const [isEditing, setIsEditing] = useState(false);
     const [editName, setEditName] = useState(currentProfile?.name || '');
-    const [editAvatar, setEditAvatar] = useState(currentProfile?.avatar || '🌸');
+    const [editAvatar, setEditAvatar] = useState(currentProfile?.avatarIndex || 0);
 
-    const avatarOptions = ['🌸', '🌺', '🌻', '🌷', '🌹', '💐', '🌼', '🪷', '🏵️', '🌱', '🍀', '🌿'];
+    // Avatar positions in the sprite (6 avatars in a row)
+    const avatarCount = 6;
+    const getAvatarStyle = (index) => ({
+        backgroundImage: 'url(/images/avatar.png)',
+        backgroundSize: `${avatarCount * 100}%`,
+        backgroundPosition: `${(index / (avatarCount - 1)) * 100}% 0`,
+        width: '48px',
+        height: '48px',
+        borderRadius: '50%',
+    });
 
     const handleSwitch = (profileId) => {
         setActiveProfile(profileId);
@@ -38,7 +47,7 @@ const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
 
     const handleSaveEdit = () => {
         if (editName.trim()) {
-            updateProfile(currentProfile.id, { name: editName.trim(), avatar: editAvatar });
+            updateProfile(currentProfile.id, { name: editName.trim(), avatarIndex: editAvatar });
             const updated = getProfiles().find(p => p.id === currentProfile.id);
             onProfileChange(updated);
             setProfiles(getProfiles());
@@ -51,10 +60,10 @@ const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
             {/* Profile Button */}
             <button
                 onClick={() => setIsOpen(true)}
-                className="fixed top-6 right-6 z-50 flex items-center gap-3 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full border border-white/20 transition-all group"
+                className="fixed top-6 right-6 z-50 flex items-center gap-3 px-5 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-xl rounded-full border border-white/30 transition-all group shadow-lg"
             >
-                <span className="text-2xl">{currentProfile?.avatar}</span>
-                <span className="text-sm text-white/80 font-light hidden sm:block">{currentProfile?.name}</span>
+                <div style={getAvatarStyle(currentProfile?.avatarIndex || 0)} className="flex-shrink-0" />
+                <span className="text-sm text-white font-light hidden sm:block">{currentProfile?.name}</span>
                 <svg className="w-4 h-4 text-white/60 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
                 </svg>
@@ -90,14 +99,14 @@ const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
                                         placeholder="Profile name"
                                     />
                                     <div className="grid grid-cols-6 gap-2">
-                                        {avatarOptions.map(avatar => (
+                                        {Array.from({ length: avatarCount }).map((_, idx) => (
                                             <button
-                                                key={avatar}
-                                                onClick={() => setEditAvatar(avatar)}
-                                                className={`text-3xl p-2 rounded-xl transition-all ${editAvatar === avatar ? 'bg-white/30 scale-110' : 'bg-white/5 hover:bg-white/20'
+                                                key={idx}
+                                                onClick={() => setEditAvatar(idx)}
+                                                className={`p-2 rounded-xl transition-all ${editAvatar === idx ? 'bg-white/30 scale-110 ring-2 ring-white/50' : 'bg-white/5 hover:bg-white/20'
                                                     }`}
                                             >
-                                                {avatar}
+                                                <div style={getAvatarStyle(idx)} className="w-full h-auto aspect-square" />
                                             </button>
                                         ))}
                                     </div>
@@ -119,14 +128,18 @@ const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
                             ) : (
                                 <div className="bg-white/10 p-6 rounded-2xl mb-6 flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <span className="text-4xl">{currentProfile?.avatar}</span>
+                                        <div style={getAvatarStyle(currentProfile?.avatarIndex || 0)} className="flex-shrink-0" />
                                         <div>
                                             <p className="text-white font-medium">{currentProfile?.name}</p>
                                             <p className="text-white/40 text-xs">Current Profile</p>
                                         </div>
                                     </div>
                                     <button
-                                        onClick={() => setIsEditing(true)}
+                                        onClick={() => {
+                                            setEditName(currentProfile?.name || '');
+                                            setEditAvatar(currentProfile?.avatarIndex || 0);
+                                            setIsEditing(true);
+                                        }}
                                         className="text-white/60 hover:text-white transition-colors"
                                     >
                                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -147,7 +160,7 @@ const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
                                             onClick={() => handleSwitch(profile.id)}
                                             className="flex items-center gap-3 flex-1"
                                         >
-                                            <span className="text-3xl">{profile.avatar}</span>
+                                            <div style={getAvatarStyle(profile.avatarIndex || 0)} className="flex-shrink-0" />
                                             <div className="text-left">
                                                 <p className="text-white font-light">{profile.name}</p>
                                                 <p className="text-white/40 text-xs">

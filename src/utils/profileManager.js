@@ -32,12 +32,12 @@ const saveProfiles = (profiles) => {
 };
 
 // Create new profile
-export const createProfile = (name, avatar = '🌸') => {
+export const createProfile = (name, avatarIndex = 0) => {
     const profiles = getProfiles();
     const newProfile = {
         id: generateProfileId(),
         name: name.trim() || 'User',
-        avatar,
+        avatarIndex,
         createdAt: new Date().toISOString(),
         lastActive: new Date().toISOString()
     };
@@ -151,7 +151,7 @@ export const migrateExistingData = () => {
         }
 
         // Create default profile
-        const defaultProfile = createProfile('Default User', '🌸');
+        const defaultProfile = createProfile('Default User', 0);
 
         // Get all existing data keys (non-profile keys)
         const dataKeys = [];
