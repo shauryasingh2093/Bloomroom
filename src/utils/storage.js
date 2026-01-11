@@ -10,6 +10,8 @@ const STORAGE_KEYS = {
   STREAK: 'bloomroom_streak',
   PREFERENCES: 'bloomroom_preferences',
   LAST_VISIT: 'bloomroom_last_visit',
+  DAILY_CHECKINS: 'bloomroom_daily_checkins',
+  QUICK_NOTES: 'bloomroom_quick_notes',
 };
 
 // Generic save function
@@ -65,6 +67,14 @@ export const loadPreferences = () => loadFromStorage(STORAGE_KEYS.PREFERENCES, {
 // Last Visit
 export const saveLastVisit = () => saveToStorage(STORAGE_KEYS.LAST_VISIT, new Date().toISOString());
 export const loadLastVisit = () => loadFromStorage(STORAGE_KEYS.LAST_VISIT, null);
+
+// Daily Check-ins
+export const saveDailyCheckins = (checkins) => saveToStorage(STORAGE_KEYS.DAILY_CHECKINS, checkins);
+export const loadDailyCheckins = () => loadFromStorage(STORAGE_KEYS.DAILY_CHECKINS, {});
+
+// Quick Notes
+export const saveQuickNotes = (notes) => saveToStorage(STORAGE_KEYS.QUICK_NOTES, notes);
+export const loadQuickNotes = () => loadFromStorage(STORAGE_KEYS.QUICK_NOTES, []);
 
 // Clear all data (for reset functionality)
 export const clearAllData = () => {

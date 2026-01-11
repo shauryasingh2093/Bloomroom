@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import RoomWrapper from '../components/RoomWrapper';
 import TaskList from '../components/tasks/TaskList';
+import QuickNotes from '../components/rooms/QuickNotes';
 
 const PlanningRoom = ({ onBack }) => {
     const containerVariants = {
@@ -31,29 +32,33 @@ const PlanningRoom = ({ onBack }) => {
             lightText={true}
         >
             <motion.div
-                className="max-w-4xl mx-auto"
+                className="max-w-6xl mx-auto px-4 sm:px-6"
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
             >
-                <motion.header className="mb-16 text-center" variants={itemVariants}>
+                <motion.header className="mb-12 sm:mb-16 text-center" variants={itemVariants}>
                     <p className="text-cream-200/60 tracking-[0.3em] uppercase text-xs font-light mb-4">
                         {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
                     </p>
-                    <h1 className="text-5xl font-extralight tracking-widest text-cream-50 uppercase">
+                    <h1 className="text-3xl sm:text-5xl font-extralight tracking-widest text-cream-50 uppercase">
                         Soft Focus
                     </h1>
                     <div className="mt-8 w-24 h-[1px] bg-white/20 mx-auto opacity-60" />
                 </motion.header>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
                     <motion.div className="lg:col-span-8" variants={itemVariants}>
                         <TaskList lightText={true} />
                     </motion.div>
 
                     <div className="lg:col-span-4 space-y-8">
+                        <motion.div variants={itemVariants}>
+                            <QuickNotes lightText={true} />
+                        </motion.div>
+
                         <motion.section
-                            className="p-8 rounded-[2rem] bg-white/10 backdrop-blur-md border border-white/20 shadow-sm"
+                            className="p-6 sm:p-8 rounded-[2rem] bg-white/10 backdrop-blur-md border border-white/20 shadow-sm"
                             variants={itemVariants}
                         >
                             <h4 className="text-xs tracking-[0.2em] uppercase font-light text-cream-200/40 mb-6">A Gentle Note</h4>
