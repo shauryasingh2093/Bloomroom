@@ -19,7 +19,7 @@ const MainHall = ({ onEnterRoom }) => {
             />
 
             {/* Overlay Content */}
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] flex flex-col items-center justify-center pointer-events-none">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] flex flex-col items-center pt-32 pointer-events-none">
                 <div className="text-center animate-slide-up px-6">
                     <h2 className="text-4xl md:text-5xl font-extralight tracking-[0.3em] text-cream-50 uppercase drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
                         Hey kashu! Welcome Home💜
