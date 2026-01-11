@@ -74,14 +74,14 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange }) => {
             <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
 
             {/* Top Bar - Mood Selector */}
-            <div className="absolute top-8 left-8 z-50">
+            <div className="absolute top-4 sm:top-8 left-4 sm:left-8 z-50">
                 {/* Mood Selector */}
-                <div className="flex gap-4 bg-white/5 backdrop-blur-md rounded-full p-2 border border-white/10">
+                <div className="flex gap-2 sm:gap-4 bg-white/5 backdrop-blur-md rounded-full p-1.5 sm:p-2 border border-white/10">
                     {moods.map((m) => (
                         <button
                             key={m.id}
                             onClick={() => changeMood(m.id)}
-                            className={`px-4 py-1.5 rounded-full text-[10px] tracking-[0.2em] uppercase transition-all duration-500 ${mood === m.id
+                            className={`px-3 sm:px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] tracking-[0.2em] uppercase transition-all duration-500 ${mood === m.id
                                 ? 'bg-white/20 text-white shadow-lg'
                                 : 'text-white/40 hover:text-white/60'
                                 }`}
@@ -94,8 +94,8 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange }) => {
 
             {/* Overlay Content */}
             <div className="absolute inset-0 flex flex-col items-center pt-32 pointer-events-none">
-                <div className="text-center animate-slide-up px-6">
-                    <h2 className="text-4xl md:text-5xl font-extralight tracking-[0.3em] text-cream-50 uppercase drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
+                <div className="text-center animate-slide-up px-4 sm:px-6">
+                    <h2 className="text-2xl sm:text-4xl md:text-5xl font-extralight tracking-[0.2em] sm:tracking-[0.3em] text-cream-50 uppercase drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
                         Hey {userName}! Welcome Home💜
                     </h2>
                     <p className="text-cream-100 font-light mt-8 tracking-[0.2em] italic opacity-90 text-sm md:text-base drop-shadow-md max-w-2xl mx-auto">
@@ -105,7 +105,7 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange }) => {
             </div>
 
             {/* Clickable Hotspots */}
-            <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-12 p-24 pointer-events-auto">
+            <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-4 sm:gap-8 md:gap-12 p-8 sm:p-16 md:p-24 pointer-events-auto">
                 {rooms.map((room) => (
                     <button
                         key={room.id}
@@ -114,8 +114,8 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange }) => {
                     >
                         <div className="absolute inset-0 bg-cream-50/0 group-hover:bg-cream-50/5 backdrop-blur-0 group-hover:backdrop-blur-[2px] rounded-full transition-all duration-700 scale-50 group-hover:scale-100" />
 
-                        <div className="relative z-10 flex flex-col items-center gap-2">
-                            <span className="text-cream-50 font-extralight tracking-[0.4em] uppercase text-xs opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-4 group-hover:translate-y-0">
+                        <div className="relative z-10 flex flex-col items-center gap-1 sm:gap-2">
+                            <span className="text-cream-50 font-extralight tracking-[0.3em] sm:tracking-[0.4em] uppercase text-[10px] sm:text-xs opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-4 group-hover:translate-y-0">
                                 {room.label}
                             </span>
 
