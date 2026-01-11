@@ -49,9 +49,10 @@ const MainHall = ({ onEnterRoom }) => {
 
     const getRoomProgress = (roomId) => {
         if (roomId === 'planning') {
-            const tasks = getTodaysTasks();
-            const completed = tasks.filter(t => t.completed).length;
-            return tasks.length > 0 ? `${completed}/${tasks.length}` : null;
+            const today = new Date().toISOString().split('T')[0];
+            const todayTasks = tasks.filter(t => !t.date || t.date === today);
+            const completed = todayTasks.filter(t => t.completed).length;
+            return todayTasks.length > 0 ? `${completed}/${todayTasks.length}` : null;
         }
         if (roomId === 'future') {
             return goals.length > 0 ? `${goals.length} Goals` : null;
@@ -61,8 +62,8 @@ const MainHall = ({ onEnterRoom }) => {
 
     const handleNameSubmit = (e) => {
         e.preventDefault();
-        if (newName.trim()) {
-            changeUserName(newName.trim());
+        if (tempName.trim()) {
+            updateUserName(tempName.trim());
             setIsEditingName(false);
         }
     };

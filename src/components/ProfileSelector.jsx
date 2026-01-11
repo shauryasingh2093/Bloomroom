@@ -85,8 +85,8 @@ const ProfileSelector = ({ onProfileSelected }) => {
                                             type="button"
                                             onClick={() => setSelectedAvatar(avatar)}
                                             className={`text-3xl p-3 rounded-2xl transition-all ${selectedAvatar === avatar
-                                                    ? 'bg-white/30 scale-110'
-                                                    : 'bg-white/5 hover:bg-white/10'
+                                                ? 'bg-white/30 scale-110'
+                                                : 'bg-white/5 hover:bg-white/10'
                                                 }`}
                                         >
                                             {avatar}
@@ -120,16 +120,16 @@ const ProfileSelector = ({ onProfileSelected }) => {
                             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                         >
                             {profiles.map((profile) => (
-                                <motion.button
+                                <motion.div
                                     key={profile.id}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={() => handleSelectProfile(profile)}
-                                    className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 hover:bg-white/15 transition-all group relative"
+                                    className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 hover:bg-white/15 transition-all group relative cursor-pointer"
                                 >
                                     <button
                                         onClick={(e) => handleDeleteProfile(profile.id, e)}
-                                        className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 text-white/40 hover:text-red-400 transition-all"
+                                        className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 text-white/40 hover:text-red-400 transition-all z-10"
                                     >
                                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -140,7 +140,7 @@ const ProfileSelector = ({ onProfileSelected }) => {
                                     <p className="text-[10px] text-cream-200/40 tracking-widest uppercase">
                                         Last active: {new Date(profile.lastActive).toLocaleDateString()}
                                     </p>
-                                </motion.button>
+                                </motion.div>
                             ))}
 
                             <motion.button
