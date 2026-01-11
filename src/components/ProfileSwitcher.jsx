@@ -1,28 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getProfiles, setActiveProfile, deleteProfile, updateProfile } from '../utils/profileManager';
+import { useApp } from '../context/appContextCore';
 
 const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
+    const { changeUserName } = useApp();
     const [isOpen, setIsOpen] = useState(false);
     const [profiles, setProfiles] = useState(getProfiles());
     const [isEditing, setIsEditing] = useState(false);
     const [editName, setEditName] = useState(currentProfile?.name || '');
     const [editAvatar, setEditAvatar] = useState(currentProfile?.avatarIndex || 0);
 
-    // Avatar positions in the sprite (6 avatars in a row)
+    // Avatar positions in the sprite (6 avatars: 3 on top row, 3 on bottom row)
     const avatarCount = 6;
-    const getAvatarStyle = (index) => ({
-        backgroundImage: 'url(/images/avatar.png)',
-        backgroundSize: `${avatarCount * 100}%`,
-        backgroundPosition: `${(index / (avatarCount - 1)) * 100}% 0`,
-        width: '48px',
-        height: '48px',
-        borderRadius: '50%',
-    });
+    const getAvatarStyle = (index) => {
+        const col = index % 3; // 0, 1, 2
+        const row = Math.floor(index / 3); // 0 or 1
+        return {
+            backgroundImage: 'url(/images/avatar.png)',
+            backgroundSize: '300% 200%', // 3 columns, 2 rows
+            backgroundPosition: `${col * 50}% ${row * 100}%`,
+            backgroundRepeat: 'no-repeat',
+        };
+    };
 
     const handleSwitch = (profileId) => {
         setActiveProfile(profileId);
         const newProfile = profiles.find(p => p.id === profileId);
+        changeUserName(newProfile.name); // Sync userName with profile name
         onProfileChange(newProfile);
         setIsOpen(false);
         window.location.reload(); // Reload to load new profile data
@@ -48,6 +53,7 @@ const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
     const handleSaveEdit = () => {
         if (editName.trim()) {
             updateProfile(currentProfile.id, { name: editName.trim(), avatarIndex: editAvatar });
+            changeUserName(editName.trim()); // Sync userName with profile name
             const updated = getProfiles().find(p => p.id === currentProfile.id);
             onProfileChange(updated);
             setProfiles(getProfiles());
@@ -62,7 +68,10 @@ const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
                 onClick={() => setIsOpen(true)}
                 className="fixed top-6 right-6 z-50 flex items-center gap-3 px-5 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-xl rounded-full border border-white/30 transition-all group shadow-lg"
             >
-                <div style={getAvatarStyle(currentProfile?.avatarIndex || 0)} className="flex-shrink-0" />
+                <div
+                    style={getAvatarStyle(currentProfile?.avatarIndex || 0)}
+                    className="w-12 h-12 rounded-full flex-shrink-0 border-2 border-white/20"
+                />
                 <span className="text-sm text-white font-light hidden sm:block">{currentProfile?.name}</span>
                 <svg className="w-4 h-4 text-white/60 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
@@ -106,7 +115,7 @@ const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
                                                 className={`p-2 rounded-xl transition-all ${editAvatar === idx ? 'bg-white/30 scale-110 ring-2 ring-white/50' : 'bg-white/5 hover:bg-white/20'
                                                     }`}
                                             >
-                                                <div style={getAvatarStyle(idx)} className="w-full h-auto aspect-square" />
+                                                <div style={getAvatarStyle(idx)} className="w-full aspect-square rounded-full" />
                                             </button>
                                         ))}
                                     </div>
@@ -128,7 +137,7 @@ const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
                             ) : (
                                 <div className="bg-white/10 p-6 rounded-2xl mb-6 flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div style={getAvatarStyle(currentProfile?.avatarIndex || 0)} className="flex-shrink-0" />
+                                        <div style={getAvatarStyle(currentProfile?.avatarIndex || 0)} className="w-12 h-12 rounded-full flex-shrink-0 border-2 border-white/20" />
                                         <div>
                                             <p className="text-white font-medium">{currentProfile?.name}</p>
                                             <p className="text-white/40 text-xs">Current Profile</p>
@@ -160,7 +169,7 @@ const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
                                             onClick={() => handleSwitch(profile.id)}
                                             className="flex items-center gap-3 flex-1"
                                         >
-                                            <div style={getAvatarStyle(profile.avatarIndex || 0)} className="flex-shrink-0" />
+                                            <div style={getAvatarStyle(profile.avatarIndex || 0)} className="w-12 h-12 rounded-full flex-shrink-0 border-2 border-white/20" />
                                             <div className="text-left">
                                                 <p className="text-white font-light">{profile.name}</p>
                                                 <p className="text-white/40 text-xs">

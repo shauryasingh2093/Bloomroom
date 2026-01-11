@@ -9,14 +9,16 @@ const ProfileSelector = ({ onProfileSelected }) => {
     const [selectedAvatar, setSelectedAvatar] = useState(0);
 
     const avatarCount = 6;
-    const getAvatarStyle = (index) => ({
-        backgroundImage: 'url(/images/avatar.png)',
-        backgroundSize: `${avatarCount * 100}%`,
-        backgroundPosition: `${(index / (avatarCount - 1)) * 100}% 0`,
-        width: '64px',
-        height: '64px',
-        borderRadius: '50%',
-    });
+    const getAvatarStyle = (index) => {
+        const col = index % 3; // 0, 1, 2
+        const row = Math.floor(index / 3); // 0 or 1
+        return {
+            backgroundImage: 'url(/images/avatar.png)',
+            backgroundSize: '300% 200%', // 3 columns, 2 rows
+            backgroundPosition: `${col * 50}% ${row * 100}%`,
+            backgroundRepeat: 'no-repeat',
+        };
+    };
 
     const handleCreateProfile = (e) => {
         e.preventDefault();
@@ -97,7 +99,7 @@ const ProfileSelector = ({ onProfileSelected }) => {
                                                 : 'bg-white/5 hover:bg-white/10'
                                                 }`}
                                         >
-                                            <div style={getAvatarStyle(idx)} className="w-full h-auto aspect-square" />
+                                            <div style={getAvatarStyle(idx)} className="w-full aspect-square rounded-full" />
                                         </button>
                                     ))}
                                 </div>
@@ -143,7 +145,7 @@ const ProfileSelector = ({ onProfileSelected }) => {
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
                                     </button>
-                                    <div style={getAvatarStyle(profile.avatarIndex || 0)} className="mx-auto mb-4" />
+                                    <div style={getAvatarStyle(profile.avatarIndex || 0)} className="w-16 h-16 rounded-full mx-auto mb-4 border-2 border-white/20" />
                                     <h3 className="text-xl font-light text-cream-50 mb-2">{profile.name}</h3>
                                     <p className="text-[10px] text-cream-200/40 tracking-widest uppercase">
                                         Last active: {new Date(profile.lastActive).toLocaleDateString()}
