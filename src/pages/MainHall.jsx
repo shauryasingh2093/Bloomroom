@@ -141,10 +141,10 @@ const MainHall = ({ onEnterRoom }) => {
                             <input
                                 autoFocus
                                 type="text"
-                                value={newName}
-                                onChange={(e) => setNewName(e.target.value)}
-                                className="w-full bg-white/5 border-b border-white/20 py-4 px-2 text-white text-center text-2xl font-light focus:outline-none focus:border-white transition-colors"
-                                placeholder="What should I call you?"
+                                value={tempName}
+                                onChange={(e) => setTempName(e.target.value)}
+                                className="w-full bg-white/10 text-white px-6 py-4 rounded-2xl border border-white/20 outline-none focus:ring-2 focus:ring-white/30 text-center text-xl"
+                                placeholder="Enter your name"
                             />
                             <div className="flex gap-4 mt-12">
                                 <button
