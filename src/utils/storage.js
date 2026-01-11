@@ -19,6 +19,8 @@ const STORAGE_KEYS = {
   LAST_VISIT: 'bloomroom_last_visit',
   DAILY_CHECKINS: 'bloomroom_daily_checkins',
   QUICK_NOTES: 'bloomroom_quick_notes',
+  JOURNAL: 'bloomroom_journal',
+  INTENTIONS: 'bloomroom_intentions',
 };
 
 // Generic save function

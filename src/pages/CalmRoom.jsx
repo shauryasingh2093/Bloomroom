@@ -12,7 +12,7 @@ const CalmRoom = ({ onBack }) => {
         <RoomWrapper
             title="Calm Room"
             onBack={onBack}
-            colorClass="bg-calm-dusk"
+            colorClass="bg-[#6D7E6A]"
             lightText={true}
         >
             <div className={`max-w-6xl mx-auto px-4 sm:px-6 transition-all duration-1000 ${isDimMode ? 'opacity-70' : 'opacity-100'}`}>

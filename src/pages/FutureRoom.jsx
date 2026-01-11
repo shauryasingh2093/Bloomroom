@@ -32,7 +32,7 @@ const FutureRoom = ({ onBack }) => {
         <RoomWrapper
             title="Future Room"
             onBack={onBack}
-            colorClass="bg-future-dusk"
+            colorClass="bg-[#17466F]"
             lightText={true}
         >
             <motion.div

@@ -56,7 +56,7 @@ export default function VideoOpening({ onEnter }) {
                 className="absolute inset-0 w-full h-full object-cover"
                 src={currentVideo === 'opening' ? '/video1.mp4' : '/entering_house.mp4'}
                 autoPlay
-                muted
+                muted={currentVideo === 'opening'}
                 playsInline
                 loop={currentVideo === 'opening'}
                 onEnded={handleVideoEnd}

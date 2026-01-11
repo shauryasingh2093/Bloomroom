@@ -56,7 +56,7 @@ const CareRoom = ({ onBack }) => {
         <RoomWrapper
             title="Care Room"
             onBack={onBack}
-            colorClass="bg-care-dusk"
+            colorClass="bg-[#C18805]"
             lightText={true}
         >
             <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -104,8 +104,8 @@ const CareRoom = ({ onBack }) => {
                                                     <div
                                                         key={date}
                                                         className={`flex-1 h-8 rounded-lg transition-all ${isComplete
-                                                                ? 'bg-white/30'
-                                                                : 'bg-white/5'
+                                                            ? 'bg-white/30'
+                                                            : 'bg-white/5'
                                                             }`}
                                                         title={new Date(date).toLocaleDateString()}
                                                     />

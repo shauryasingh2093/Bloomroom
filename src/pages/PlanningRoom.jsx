@@ -3,6 +3,7 @@ import RoomWrapper from '../components/RoomWrapper';
 import TaskList from '../components/tasks/TaskList';
 import QuickNotes from '../components/rooms/QuickNotes';
 import FocusTimer from '../components/planning/FocusTimer';
+import DailyCalendar from '../components/planning/DailyCalendar';
 
 const PlanningRoom = ({ onBack }) => {
     const containerVariants = {
@@ -29,7 +30,7 @@ const PlanningRoom = ({ onBack }) => {
         <RoomWrapper
             title="Planning Room"
             onBack={onBack}
-            colorClass="bg-planning-dusk"
+            colorClass="bg-[#726E6D]"
             lightText={true}
         >
             <motion.div
@@ -56,6 +57,13 @@ const PlanningRoom = ({ onBack }) => {
                     <div className="lg:col-span-4 space-y-8">
                         <motion.div variants={itemVariants}>
                             <QuickNotes lightText={true} />
+                        </motion.div>
+
+                        <motion.div
+                            className="bg-white/10 backdrop-blur-md p-6 sm:p-8 rounded-[2rem] border border-white/20"
+                            variants={itemVariants}
+                        >
+                            <DailyCalendar lightText={true} />
                         </motion.div>
 
                         <motion.div

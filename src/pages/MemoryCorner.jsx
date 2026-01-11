@@ -1,6 +1,7 @@
 import React from 'react';
 import RoomWrapper from '../components/RoomWrapper';
 import GratitudeJournal from '../components/rooms/GratitudeJournal';
+import JournalWithImages from '../components/memory/JournalWithImages';
 import { useApp } from '../context/appContextCore';
 
 const MemoryCorner = ({ onBack }) => {
@@ -10,7 +11,7 @@ const MemoryCorner = ({ onBack }) => {
         <RoomWrapper
             title="Memory Corner"
             onBack={onBack}
-            colorClass="bg-memory-dusk"
+            colorClass="bg-[#CAA188]"
             lightText={true}
         >
             <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -25,10 +26,13 @@ const MemoryCorner = ({ onBack }) => {
                 </header>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-                    {/* Gratitude Journal - Left Column */}
-                    <div className="lg:col-span-1">
+                    {/* Left Column: Gratitude Journal & Journal with Images */}
+                    <div className="lg:col-span-1 space-y-8">
                         <div className="bg-white/10 backdrop-blur-md p-6 sm:p-8 rounded-[2.5rem] border border-white/20 sticky top-8">
                             <GratitudeJournal lightText={true} />
+                        </div>
+                        <div className="bg-white/10 backdrop-blur-md p-6 sm:p-8 rounded-[2.5rem] border border-white/20">
+                            <JournalWithImages lightText={true} />
                         </div>
                     </div>
 
