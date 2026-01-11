@@ -19,15 +19,6 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange }) => {
         changeUserName
     } = useApp();
 
-    const [isEditingName, setIsEditingName] = useState(false);
-    const [tempName, setTempName] = useState('');
-
-    useEffect(() => {
-        if (isEditingName) {
-            setTempName(userName);
-        }
-    }, [isEditingName, userName]);
-
     const rooms = [
         { id: 'planning', name: 'Planning Room', label: 'Plan', pos: 'col-start-1 row-start-2' },
         { id: 'calm', name: 'Calm Room', label: 'Breathe', pos: 'col-start-2 row-start-2' },
@@ -55,13 +46,6 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange }) => {
         return null;
     };
 
-    const handleNameSubmit = (e) => {
-        e.preventDefault();
-        if (tempName.trim()) {
-            changeUserName(tempName.trim());
-            setIsEditingName(false);
-        }
-    };
 
     const moodFilters = {
         focused: 'contrast-[1.1] saturate-[1.1] brightness-[0.95]',
@@ -88,8 +72,8 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange }) => {
 
             <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
 
-            {/* Top Bar - Settings & Mood */}
-            <div className="absolute top-8 left-8 right-8 flex justify-between items-center z-50">
+            {/* Top Bar - Mood Selector */}
+            <div className="absolute top-8 left-8 z-50">
                 {/* Mood Selector */}
                 <div className="flex gap-4 bg-white/5 backdrop-blur-md rounded-full p-2 border border-white/10">
                     {moods.map((m) => (
@@ -105,61 +89,7 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange }) => {
                         </button>
                     ))}
                 </div>
-
-                {/* Edit Profile */}
-                <button
-                    onClick={() => setIsEditingName(true)}
-                    className="w-10 h-10 rounded-full bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/40 hover:text-white transition-colors"
-                >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                </button>
             </div>
-
-            {/* Name Editing Modal */}
-            <AnimatePresence>
-                {isEditingName && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center"
-                    >
-                        <motion.form
-                            initial={{ scale: 0.9, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            onSubmit={handleNameSubmit}
-                            className="bg-white/10 border border-white/20 p-12 rounded-[3rem] backdrop-blur-xl max-w-sm w-full"
-                        >
-                            <h3 className="text-cream-50 text-xl font-light tracking-widest uppercase mb-8 text-center">Your Name</h3>
-                            <input
-                                autoFocus
-                                type="text"
-                                value={tempName}
-                                onChange={(e) => setTempName(e.target.value)}
-                                className="w-full bg-white/10 text-white px-6 py-4 rounded-2xl border border-white/20 outline-none focus:ring-2 focus:ring-white/30 text-center text-xl"
-                                placeholder="Enter your name"
-                            />
-                            <div className="flex gap-4 mt-12">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsEditingName(false)}
-                                    className="flex-1 py-4 text-[10px] tracking-[0.3em] uppercase text-white/40 hover:text-white transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="flex-1 py-4 bg-white/10 hover:bg-white/20 text-white rounded-2xl text-[10px] tracking-[0.3em] uppercase transition-all"
-                                >
-                                    Save
-                                </button>
-                            </div>
-                        </motion.form>
-                    </motion.div>
-                )}
-            </AnimatePresence>
 
             {/* Overlay Content */}
             <div className="absolute inset-0 flex flex-col items-center pt-32 pointer-events-none">
