@@ -39,6 +39,10 @@ export const AppProvider = ({ children }) => {
     // Preferences state
     const [preferences, setPreferences] = useState(() => loadPreferences());
 
+    // User Profile state
+    const [userName, setUserName] = useState(() => preferences.userName || 'kashu');
+    const [mood, setMood] = useState(() => preferences.mood || 'calm');
+
     // Load visit on mount
     useEffect(() => {
         saveLastVisit();
@@ -201,6 +205,16 @@ export const AppProvider = ({ children }) => {
         savePreferences(updatedPrefs);
     };
 
+    const changeUserName = (name) => {
+        setUserName(name);
+        updatePreferences({ userName: name });
+    };
+
+    const changeMood = (newMood) => {
+        setMood(newMood);
+        updatePreferences({ mood: newMood });
+    };
+
     // Get today's tasks
     const getTodaysTasks = () => {
         const today = getTodayString();
@@ -221,6 +235,8 @@ export const AppProvider = ({ children }) => {
         selfCare,
         streak,
         preferences,
+        userName,
+        mood,
 
         // Task functions
         addTask,
@@ -252,6 +268,8 @@ export const AppProvider = ({ children }) => {
 
         // Preferences functions
         updatePreferences,
+        changeUserName,
+        changeMood,
     };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

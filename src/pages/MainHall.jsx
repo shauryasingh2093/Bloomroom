@@ -1,6 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useApp } from '../context/appContextCore';
+import DailyAffirmation from '../components/DailyAffirmation';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const MainHall = ({ onEnterRoom }) => {
+    const {
+        userName,
+        changeUserName,
+        mood,
+        changeMood,
+        getTodaysTasks,
+        goals
+    } = useApp();
+
+    const [isEditingName, setIsEditingName] = useState(false);
+    const [newName, setNewName] = useState(userName);
+
     const rooms = [
         { id: 'planning', name: 'Planning Room', label: 'Plan', pos: 'col-start-1 row-start-2' },
         { id: 'calm', name: 'Calm Room', label: 'Breathe', pos: 'col-start-2 row-start-2' },
@@ -9,8 +24,40 @@ const MainHall = ({ onEnterRoom }) => {
         { id: 'memory', name: 'Memory Corner', label: 'Reflect', pos: 'col-start-3 row-start-3' },
     ];
 
+    const moods = [
+        { id: 'focused', label: 'Focused', color: 'bg-blue-400' },
+        { id: 'calm', label: 'Calm', color: 'bg-sage-400' },
+        { id: 'dreamy', label: 'Dreamy', color: 'bg-rose-300' },
+    ];
+
+    const getRoomProgress = (roomId) => {
+        if (roomId === 'planning') {
+            const tasks = getTodaysTasks();
+            const completed = tasks.filter(t => t.completed).length;
+            return tasks.length > 0 ? `${completed}/${tasks.length}` : null;
+        }
+        if (roomId === 'future') {
+            return goals.length > 0 ? `${goals.length} Goals` : null;
+        }
+        return null;
+    };
+
+    const handleNameSubmit = (e) => {
+        e.preventDefault();
+        if (newName.trim()) {
+            changeUserName(newName.trim());
+            setIsEditingName(false);
+        }
+    };
+
+    const moodFilters = {
+        focused: 'contrast-[1.1] saturate-[1.1] brightness-[0.95]',
+        calm: 'saturate-[0.8] brightness-[1.05] sepia-[0.1]',
+        dreamy: 'saturate-[1.2] brightness-[1.1] contrast-[0.9] hue-rotate-[10deg]',
+    };
+
     return (
-        <div className="fixed inset-0 w-screen h-screen overflow-hidden">
+        <div className={`fixed inset-0 w-screen h-screen overflow-hidden transition-all duration-[2000ms] ${moodFilters[mood]}`}>
             {/* Background Image */}
             <img
                 src="/Entered.png"
@@ -18,11 +65,86 @@ const MainHall = ({ onEnterRoom }) => {
                 className="absolute inset-0 w-full h-full object-cover animate-fade-in"
             />
 
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
+
+            {/* Top Bar - Settings & Mood */}
+            <div className="absolute top-8 left-8 right-8 flex justify-between items-center z-50">
+                {/* Mood Selector */}
+                <div className="flex gap-4 bg-white/5 backdrop-blur-md rounded-full p-2 border border-white/10">
+                    {moods.map((m) => (
+                        <button
+                            key={m.id}
+                            onClick={() => changeMood(m.id)}
+                            className={`px-4 py-1.5 rounded-full text-[10px] tracking-[0.2em] uppercase transition-all duration-500 ${mood === m.id
+                                    ? 'bg-white/20 text-white shadow-lg'
+                                    : 'text-white/40 hover:text-white/60'
+                                }`}
+                        >
+                            {m.label}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Edit Profile */}
+                <button
+                    onClick={() => setIsEditingName(true)}
+                    className="w-10 h-10 rounded-full bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center text-white/40 hover:text-white transition-colors"
+                >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </button>
+            </div>
+
+            {/* Name Editing Modal */}
+            <AnimatePresence>
+                {isEditingName && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center"
+                    >
+                        <motion.form
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            onSubmit={handleNameSubmit}
+                            className="bg-white/10 border border-white/20 p-12 rounded-[3rem] backdrop-blur-xl max-w-sm w-full"
+                        >
+                            <h3 className="text-cream-50 text-xl font-light tracking-widest uppercase mb-8 text-center">Your Name</h3>
+                            <input
+                                autoFocus
+                                type="text"
+                                value={newName}
+                                onChange={(e) => setNewName(e.target.value)}
+                                className="w-full bg-white/5 border-b border-white/20 py-4 px-2 text-white text-center text-2xl font-light focus:outline-none focus:border-white transition-colors"
+                                placeholder="What should I call you?"
+                            />
+                            <div className="flex gap-4 mt-12">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsEditingName(false)}
+                                    className="flex-1 py-4 text-[10px] tracking-[0.3em] uppercase text-white/40 hover:text-white transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="flex-1 py-4 bg-white/10 hover:bg-white/20 text-white rounded-2xl text-[10px] tracking-[0.3em] uppercase transition-all"
+                                >
+                                    Save
+                                </button>
+                            </div>
+                        </motion.form>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Overlay Content */}
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] flex flex-col items-center pt-32 pointer-events-none">
+            <div className="absolute inset-0 flex flex-col items-center pt-32 pointer-events-none">
                 <div className="text-center animate-slide-up px-6">
                     <h2 className="text-4xl md:text-5xl font-extralight tracking-[0.3em] text-cream-50 uppercase drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
-                        Hey kashu! Welcome Home💜
+                        Hey {userName}! Welcome Home💜
                     </h2>
                     <p className="text-cream-100 font-light mt-8 tracking-[0.2em] italic opacity-90 text-sm md:text-base drop-shadow-md max-w-2xl mx-auto">
                         Choose a room to begin your journey
@@ -40,19 +162,28 @@ const MainHall = ({ onEnterRoom }) => {
                     >
                         <div className="absolute inset-0 bg-cream-50/0 group-hover:bg-cream-50/5 backdrop-blur-0 group-hover:backdrop-blur-[2px] rounded-full transition-all duration-700 scale-50 group-hover:scale-100" />
 
-                        <span className="relative z-10 text-cream-50 font-extralight tracking-[0.4em] uppercase text-xs opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-4 group-hover:translate-y-0">
-                            {room.label}
-                        </span>
+                        <div className="relative z-10 flex flex-col items-center gap-2">
+                            <span className="text-cream-50 font-extralight tracking-[0.4em] uppercase text-xs opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-4 group-hover:translate-y-0">
+                                {room.label}
+                            </span>
+
+                            {getRoomProgress(room.id) && (
+                                <span className="text-[10px] text-cream-200/40 tracking-[0.2em] uppercase font-light opacity-0 group-hover:opacity-100 transition-all duration-1000 delay-100">
+                                    {getRoomProgress(room.id)}
+                                </span>
+                            )}
+                        </div>
 
                         <div className="mt-4 w-1 h-1 bg-cream-50 rounded-full opacity-40 group-hover:scale-[8] group-hover:opacity-10 transition-all duration-1000" />
 
-                        {/* Room specific tooltips could go here */}
                         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-60 transition-opacity duration-1000 whitespace-nowrap">
                             <span className="text-[10px] text-cream-200 uppercase tracking-widest">{room.name}</span>
                         </div>
                     </button>
                 ))}
             </div>
+
+            <DailyAffirmation />
         </div>
     );
 };

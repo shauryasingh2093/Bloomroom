@@ -1,8 +1,10 @@
-import { motion } from 'framer-motion';
+import { useApp } from '../context/appContextCore';
 import RoomWrapper from '../components/RoomWrapper';
 import GoalList from '../components/rooms/GoalList';
+import GrowthVisualizer from '../components/GrowthVisualizer';
 
 const FutureRoom = ({ onBack }) => {
+    const { goals } = useApp();
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -63,17 +65,12 @@ const FutureRoom = ({ onBack }) => {
                         </motion.section>
 
                         <motion.div
-                            className="relative group overflow-hidden rounded-[2.2rem] border border-white/10"
+                            className="relative group overflow-hidden rounded-[2.2rem] border border-white/10 bg-white/5 backdrop-blur-sm p-8"
                             variants={itemVariants}
                         >
-                            <img
-                                src="/paintings/Default.png"
-                                alt="Vision"
-                                className="w-full h-64 object-cover opacity-60 group-hover:scale-110 transition-transform duration-[3s]"
-                                onError={(e) => e.target.style.display = 'none'}
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-8">
-                                <span className="text-white/80 text-[10px] tracking-[0.4em] uppercase font-light">Vision Board</span>
+                            <GrowthVisualizer goals={goals} />
+                            <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
+                                <span className="text-white/40 text-[10px] tracking-[0.4em] uppercase font-light">Growth Pattern</span>
                             </div>
                         </motion.div>
                     </div>
