@@ -6,7 +6,7 @@ import Button from '../Button';
 import Input from '../Input';
 
 const GoalList = ({ lightText = false }) => {
-    const { goals, addGoal, deleteGoal } = useApp();
+    const { goals, addGoal, deleteGoal, toggleGoal } = useApp();
     const [newGoal, setNewGoal] = useState({ title: '', description: '' });
     const [showForm, setShowForm] = useState(false);
 
@@ -25,7 +25,7 @@ const GoalList = ({ lightText = false }) => {
     return (
         <div className="w-full max-w-2xl mx-auto">
             <div className="flex justify-between items-center mb-12">
-                <h3 className={`text-sm tracking-[0.3em] uppercase font-light ${subTextColor}`}>Long-term Intentions</h3>
+                <h3 className={`text-sm tracking-[0.3em] uppercase font-light ${subTextColor}`}>2026 Goals</h3>
                 <button
                     onClick={() => setShowForm(!showForm)}
                     className={`text-xs tracking-widest uppercase font-light ${lightText ? 'text-cream-200 hover:text-white' : 'text-blue-500 hover:text-blue-700'} transition-colors`}
@@ -73,7 +73,7 @@ const GoalList = ({ lightText = false }) => {
                             exit={{ opacity: 0, scale: 0.9 }}
                             className="py-20 text-center opacity-40"
                         >
-                            <p className={`font-light italic ${lightText ? 'text-cream-100' : 'text-slate-500'}`}>No goals planted yet. This is a space for your "someday" dreams.</p>
+                            <p className={`font-light italic ${lightText ? 'text-cream-100' : 'text-slate-500'}`}>No goals planted yet. Plant a seed to start your 2026 journey.</p>
                         </motion.div>
                     ) : (
                         goals.map((goal) => (
@@ -83,12 +83,28 @@ const GoalList = ({ lightText = false }) => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.95 }}
-                                className="bg-white/10 backdrop-blur-sm p-8 rounded-3xl border border-white/20 group hover:bg-white/15 transition-all duration-500 shadow-sm hover:shadow-md"
+                                className={`bg-white/10 backdrop-blur-sm p-8 rounded-3xl border border-white/20 group hover:bg-white/15 transition-all duration-500 shadow-sm hover:shadow-md ${goal.completed ? 'opacity-60' : ''}`}
                             >
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h4 className={`text-xl font-light ${textColor} tracking-wide mb-2`}>{goal.title}</h4>
-                                        <p className={`${subTextColor} font-light leading-relaxed`}>{goal.description}</p>
+                                <div className="flex justify-between items-start gap-4">
+                                    <button
+                                        onClick={() => toggleGoal(goal.id)}
+                                        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${goal.completed ? 'bg-white/40 border-white/20' : 'border-white/20 hover:border-white/40'}`}
+                                    >
+                                        {goal.completed && (
+                                            <motion.svg
+                                                initial={{ scale: 0 }}
+                                                animate={{ scale: 1 }}
+                                                className="w-3 h-3 text-white"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                            </motion.svg>
+                                        )}
+                                    </button>
+                                    <div className="flex-1">
+                                        <h4 className={`text-xl font-light ${textColor} tracking-wide mb-2 ${goal.completed ? 'line-through opacity-50' : ''}`}>{goal.title}</h4>
+                                        <p className={`${subTextColor} font-light leading-relaxed ${goal.completed ? 'opacity-50' : ''}`}>{goal.description}</p>
                                     </div>
                                     <button
                                         onClick={() => deleteGoal(goal.id)}
@@ -101,9 +117,11 @@ const GoalList = ({ lightText = false }) => {
                                 </div>
                                 <div className="mt-6 flex gap-4">
                                     <div className={`h-1 flex-1 ${lightText ? 'bg-white/10' : 'bg-slate-100'} rounded-full overflow-hidden`}>
-                                        <div className={`h-full ${lightText ? 'bg-white/30' : 'bg-slate-400/30'} w-1/3 rounded-full`} />
+                                        <div className={`h-full ${goal.completed ? 'bg-white/60 w-full' : 'bg-white/30 w-1/3'} transition-all duration-1000 rounded-full`} />
                                     </div>
-                                    <span className={`text-[10px] tracking-widest uppercase ${lightText ? 'text-white/30' : 'text-slate-400'}`}>Growing slowly</span>
+                                    <span className={`text-[10px] tracking-widest uppercase ${lightText ? 'text-white/30' : 'text-slate-400'}`}>
+                                        {goal.completed ? 'Achieved & Rooted' : 'Growing slowly'}
+                                    </span>
                                 </div>
                             </motion.div>
                         ))

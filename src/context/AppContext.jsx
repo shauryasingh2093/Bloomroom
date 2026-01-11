@@ -14,6 +14,7 @@ import {
     saveLastVisit
 } from '../utils/storage';
 import { calculateStreak, getTodayString } from '../utils/dateHelpers';
+import { getCurrentProfile } from '../utils/profileManager';
 
 
 
@@ -40,7 +41,11 @@ export const AppProvider = ({ children }) => {
     const [preferences, setPreferences] = useState(() => loadPreferences());
 
     // User Profile state
-    const [userName, setUserName] = useState(() => preferences.userName || 'kashu');
+    const [userName, setUserName] = useState(() => {
+        const profile = preferences.userId ? null : loadPreferences()?.userName; // Fallback for migration
+        const activeProfile = getCurrentProfile();
+        return activeProfile ? activeProfile.name : (profile || 'User');
+    });
     const [mood, setMood] = useState(() => preferences.mood || 'calm');
 
     // Load visit on mount
@@ -128,6 +133,7 @@ export const AppProvider = ({ children }) => {
             weeklyIntentions: goal.weeklyIntentions || [],
             dailyActions: goal.dailyActions || [],
             createdAt: new Date().toISOString(),
+            completed: false,
         };
         const updatedGoals = [...goals, newGoal];
         setGoals(updatedGoals);
@@ -144,6 +150,14 @@ export const AppProvider = ({ children }) => {
 
     const deleteGoal = (goalId) => {
         const updatedGoals = goals.filter(g => g.id !== goalId);
+        setGoals(updatedGoals);
+        saveGoals(updatedGoals);
+    };
+
+    const toggleGoal = (goalId) => {
+        const updatedGoals = goals.map(goal =>
+            goal.id === goalId ? { ...goal, completed: !goal.completed } : goal
+        );
         setGoals(updatedGoals);
         saveGoals(updatedGoals);
     };
@@ -253,6 +267,7 @@ export const AppProvider = ({ children }) => {
         addGoal,
         updateGoal,
         deleteGoal,
+        toggleGoal,
 
         // Mind dump functions
         addMindDump,

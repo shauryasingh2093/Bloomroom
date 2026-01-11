@@ -62,7 +62,7 @@ const FutureRoom = ({ onBack }) => {
                         </div>
 
                         <div className="bg-white/10 backdrop-blur-md p-8 sm:p-12 rounded-[3rem] border border-white/20">
-                            <GoalList />
+                            <GoalList lightText={true} />
                         </div>
                     </motion.div>
 
@@ -76,13 +76,13 @@ const FutureRoom = ({ onBack }) => {
                         </motion.div>
 
                         <motion.div
-                            className="relative group overflow-hidden rounded-[2.2rem] border border-white/10 bg-white/5 backdrop-blur-sm p-8"
+                            className="relative group overflow-hidden rounded-[2.2rem] border border-white/10 bg-white/10 backdrop-blur-md p-8 pt-16 h-[400px] flex flex-col justify-end"
                             variants={itemVariants}
                         >
-                            <GrowthVisualizer goals={goals} />
-                            <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
+                            <div className="absolute top-8 left-1/2 -translate-x-1/2 w-full text-center">
                                 <span className="text-white/40 text-[10px] tracking-[0.4em] uppercase font-light">Growth Pattern</span>
                             </div>
+                            <GrowthVisualizer goals={goals} />
                         </motion.div>
                     </div>
                 </div>

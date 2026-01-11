@@ -7,23 +7,16 @@ const ProfileSelector = ({ onProfileSelected }) => {
     const [isCreating, setIsCreating] = useState(false);
     const [newProfileName, setNewProfileName] = useState('');
     const [selectedAvatar, setSelectedAvatar] = useState(0);
-
     const avatarCount = 6;
-    const avatarImages = [
-        '/images/a1.png',
-        '/images/a2.png',
-        '/images/a3.png',
-        '/images/a4.png',
-        '/images/a5.png',
-        '/images/a6.png',
-    ];
 
-    const getAvatarStyle = (index) => ({
-        backgroundImage: `url(${avatarImages[index] || avatarImages[0]})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-    });
+    const getAvatarStyle = (index) => {
+        return {
+            backgroundImage: `url('/images/a${index + 1}.png')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+        };
+    };
 
     const handleCreateProfile = (e) => {
         e.preventDefault();

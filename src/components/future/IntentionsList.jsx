@@ -32,7 +32,7 @@ const IntentionsList = ({ lightText = true }) => {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h3 className={`text-xs tracking-[0.3em] uppercase font-light ${lightText ? 'text-cream-200/40' : 'text-slate-400'}`}>
-                    2026 Intentions
+                    Bucket List
                 </h3>
                 {intentions.length < 5 && !isAdding && (
                     <button
@@ -58,7 +58,7 @@ const IntentionsList = ({ lightText = true }) => {
                             type="text"
                             value={newIntention}
                             onChange={(e) => setNewIntention(e.target.value)}
-                            placeholder="I intend to..."
+                            placeholder="I want to..."
                             className={`w-full bg-white/5 border border-white/20 rounded-2xl px-6 py-4 ${textColor} font-light focus:outline-none focus:ring-2 focus:ring-white/30 placeholder:text-white/30`}
                         />
                         <div className="flex gap-3">
@@ -84,7 +84,7 @@ const IntentionsList = ({ lightText = true }) => {
                 {intentions.length === 0 ? (
                     <div className="py-12 text-center opacity-40">
                         <p className={`${textColor} font-light italic text-sm`}>
-                            Set your intentions for 2026
+                            Add items to your bucket list
                         </p>
                     </div>
                 ) : (

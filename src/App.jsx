@@ -47,7 +47,7 @@ function App() {
 
   const renderRoom = () => {
     if (transitionRoom) {
-      return <VideoTransition roomId={transitionRoom} onComplete={handleTransitionComplete} />;
+      return <VideoTransition roomId={transitionRoom} isActive={true} onComplete={handleTransitionComplete} />;
     }
 
     switch (currentRoom) {

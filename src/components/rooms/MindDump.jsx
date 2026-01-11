@@ -18,6 +18,7 @@ const MindDump = ({ lightText = false }) => {
         if (!input.trim()) return;
 
         setIsProcessing(true);
+        // Start "shredding" effect
         setTimeout(() => {
             const response = getAIResponse(input);
             const formattedResponse = formatAIResponse(response);
@@ -25,7 +26,7 @@ const MindDump = ({ lightText = false }) => {
             addMindDump(input, formattedResponse);
             setInput('');
             setIsProcessing(false);
-        }, 1200);
+        }, 2500); // Longer delay for the cool animation
     };
 
     return (
@@ -34,16 +35,39 @@ const MindDump = ({ lightText = false }) => {
                 {!currentResponse ? (
                     <motion.div
                         key="input"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="bg-white/10 backdrop-blur-xl p-8 rounded-[2rem] border border-white/20 shadow-xl"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{
+                            opacity: 0,
+                            y: 100,
+                            scale: 0.5,
+                            filter: 'blur(10px)',
+                            transition: { duration: 2, ease: "easeIn" }
+                        }}
+                        className="bg-white/10 backdrop-blur-xl p-8 rounded-[2rem] border border-white/20 shadow-xl relative overflow-hidden"
                     >
+                        {isProcessing && (
+                            <motion.div
+                                className="absolute inset-0 z-10 bg-white/5 pointer-events-none"
+                                initial={{ y: "0%" }}
+                                animate={{ y: "100%" }}
+                                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                style={{
+                                    background: 'linear-gradient(transparent, rgba(255,255,255,0.2), transparent)',
+                                    height: '50%'
+                                }}
+                            />
+                        )}
                         <form onSubmit={handleSubmit}>
                             <label className={`block text-sm tracking-[0.2em] uppercase font-light ${subTextColor} mb-6 text-center`}>
                                 What's weighing on you?
                             </label>
-                            <textarea
+                            <motion.textarea
+                                animate={isProcessing ? {
+                                    x: [0, -1, 1, -1, 1, 0],
+                                    opacity: [1, 0.8, 1],
+                                    transition: { duration: 0.2, repeat: Infinity }
+                                } : {}}
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 placeholder="Let it all out. This space is yours..."
@@ -57,7 +81,7 @@ const MindDump = ({ lightText = false }) => {
                                     disabled={!input.trim() || isProcessing}
                                     className={lightText ? '!bg-white/20 !text-white' : '!bg-sage-600'}
                                 >
-                                    {isProcessing ? 'Listening...' : 'Release'}
+                                    {isProcessing ? 'Processing...' : 'Release & Forget'}
                                 </Button>
                             </div>
                         </form>
@@ -100,19 +124,6 @@ const MindDump = ({ lightText = false }) => {
                 )}
             </AnimatePresence>
 
-            {mindDumps.length > 0 && !currentResponse && (
-                <div className="mt-20">
-                    <h4 className={`text-[10px] tracking-[0.4em] uppercase font-light ${subTextColor} mb-8 text-center`}>Past Echoes</h4>
-                    <div className="space-y-4 opacity-60">
-                        {mindDumps.slice(0, 3).map((dump) => (
-                            <div key={dump.id} className="p-4 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 text-xs font-light flex justify-between">
-                                <span className={`truncate mr-4 ${lightText ? 'text-cream-100' : 'text-slate-500'}`}>{dump.content}</span>
-                                <span className={`flex-shrink-0 ${lightText ? 'text-cream-200/40' : 'text-slate-400'}`}>{new Date(dump.createdAt).toLocaleDateString()}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

@@ -4,6 +4,7 @@ import TaskList from '../components/tasks/TaskList';
 import QuickNotes from '../components/rooms/QuickNotes';
 import FocusTimer from '../components/planning/FocusTimer';
 import DailyCalendar from '../components/planning/DailyCalendar';
+import PlanningAmbient from '../components/planning/PlanningAmbient';
 
 const PlanningRoom = ({ onBack }) => {
     const containerVariants = {
@@ -64,6 +65,13 @@ const PlanningRoom = ({ onBack }) => {
                             variants={itemVariants}
                         >
                             <DailyCalendar lightText={true} />
+                        </motion.div>
+
+                        <motion.div
+                            className="bg-white/10 backdrop-blur-md p-6 sm:p-8 rounded-[2rem] border border-white/20"
+                            variants={itemVariants}
+                        >
+                            <PlanningAmbient lightText={true} />
                         </motion.div>
 
                         <motion.div

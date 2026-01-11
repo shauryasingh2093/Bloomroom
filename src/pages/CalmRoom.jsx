@@ -12,15 +12,20 @@ const CalmRoom = ({ onBack }) => {
         <RoomWrapper
             title="Calm Room"
             onBack={onBack}
-            colorClass="bg-[#6D7E6A]"
+            colorClass={isDimMode ? "bg-[#2D342B]" : "bg-[#6D7E6A]"}
             lightText={true}
         >
-            <div className={`max-w-6xl mx-auto px-4 sm:px-6 transition-all duration-1000 ${isDimMode ? 'opacity-70' : 'opacity-100'}`}>
+            {/* Dark Overlay for Dim Mode */}
+            <div
+                className={`fixed inset-0 bg-black/60 pointer-events-none z-[5] transition-opacity duration-1000 ${isDimMode ? 'opacity-100' : 'opacity-0'}`}
+            />
+
+            <div className={`relative z-10 max-w-6xl mx-auto px-4 sm:px-6 transition-all duration-1000`}>
                 {/* Header with Dim Mode Toggle */}
-                <header className="mb-12 sm:mb-16 text-center relative">
+                <header className="mb-12 sm:mb-16 text-center relative z-20">
                     <button
                         onClick={() => setIsDimMode(!isDimMode)}
-                        className="absolute top-0 right-0 px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 text-white/60 hover:text-white text-[10px] tracking-[0.2em] uppercase transition-all flex items-center gap-2"
+                        className="absolute top-0 right-0 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white shadow-lg text-[10px] tracking-[0.2em] uppercase transition-all flex items-center gap-2 border border-white/20"
                     >
                         <span>{isDimMode ? '☀️' : '🌙'}</span>
                         {isDimMode ? 'Bright' : 'Dim'}

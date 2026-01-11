@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-const AmbientPlayer = ({ lightText = true }) => {
+const PlanningAmbient = ({ lightText = true }) => {
     const [currentSound, setCurrentSound] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [volume, setVolume] = useState(0.5);
@@ -21,7 +21,6 @@ const AmbientPlayer = ({ lightText = true }) => {
 
     const handleSoundSelect = (sound) => {
         if (currentSound?.id === sound.id) {
-            // Toggle play/pause
             if (isPlaying) {
                 audioRef.current?.pause();
                 setIsPlaying(false);
@@ -30,7 +29,6 @@ const AmbientPlayer = ({ lightText = true }) => {
                 setIsPlaying(true);
             }
         } else {
-            // Switch sound
             setCurrentSound(sound);
             setIsPlaying(true);
             if (audioRef.current) {
@@ -40,52 +38,42 @@ const AmbientPlayer = ({ lightText = true }) => {
         }
     };
 
-    const handleStop = () => {
-        audioRef.current?.pause();
-        if (audioRef.current) audioRef.current.currentTime = 0;
-        setIsPlaying(false);
-        setCurrentSound(null);
-    };
-
     const textColor = lightText ? 'text-cream-50' : 'text-slate-800';
     const subTextColor = lightText ? 'text-cream-200/60' : 'text-slate-600';
 
     return (
-        <div className="space-y-6">
-            <h3 className={`text-xs tracking-[0.3em] uppercase font-light ${lightText ? 'text-cream-200/40' : 'text-slate-400'} text-center`}>
-                Ambient Sounds
+        <div className="space-y-4">
+            <h3 className={`text-[10px] tracking-[0.3em] uppercase font-light ${lightText ? 'text-cream-200/40' : 'text-slate-400'} text-center`}>
+                Focus Sounds
             </h3>
 
-            {/* Sound Selection */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-3">
                 {sounds.map((sound) => (
                     <button
                         key={sound.id}
                         onClick={() => handleSoundSelect(sound)}
-                        className={`p-6 rounded-3xl flex flex-col items-center justify-center gap-3 transition-all duration-500 ${currentSound?.id === sound.id && isPlaying
-                            ? 'bg-white/30 text-white shadow-lg scale-105'
-                            : 'bg-white/5 text-cream-200/60 hover:bg-white/10'
+                        className={`p-4 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all duration-300 ${currentSound?.id === sound.id && isPlaying
+                            ? 'bg-white/20 text-white shadow-md'
+                            : 'bg-white/5 text-white/40 hover:bg-white/10'
                             }`}
                     >
-                        <span className="text-3xl">{sound.icon}</span>
-                        <span className={`text-[10px] tracking-widest uppercase font-light ${currentSound?.id === sound.id && isPlaying ? 'text-white' : 'text-cream-200/60'
-                            }`}>
+                        <span className="text-xl">{sound.icon}</span>
+                        <span className="text-[9px] tracking-widest uppercase font-light text-center">
                             {sound.name}
                         </span>
                     </button>
                 ))}
             </div>
 
-            {/* Volume Control */}
             {isPlaying && (
                 <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    className="space-y-3"
+                    className="space-y-2 pt-2"
                 >
-                    <div className="flex items-center justify-between">
-                        <span className={`text-xs ${subTextColor} tracking-widest uppercase`}>Volume</span>
-                        <span className={`text-xs ${textColor}`}>{Math.round(volume * 100)}%</span>
+                    <div className="flex items-center justify-between px-1">
+                        <span className={`text-[9px] ${subTextColor} tracking-widest uppercase`}>Volume</span>
+                        <span className={`text-[9px] ${textColor}`}>{Math.round(volume * 100)}%</span>
                     </div>
                     <input
                         type="range"
@@ -102,25 +90,9 @@ const AmbientPlayer = ({ lightText = true }) => {
                 </motion.div>
             )}
 
-            {/* Stop Button */}
-            {isPlaying && (
-                <motion.button
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    onClick={handleStop}
-                    className="w-full py-3 bg-white/10 hover:bg-white/20 text-white/80 rounded-2xl text-xs tracking-[0.3em] uppercase transition-all"
-                >
-                    Stop
-                </motion.button>
-            )}
-
-            {/* Hidden Audio Element */}
             <audio ref={audioRef} loop />
-
-            {/* Note about sounds */}
-
         </div>
     );
 };
 
-export default AmbientPlayer;
+export default PlanningAmbient;

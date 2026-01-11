@@ -67,7 +67,8 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange }) => {
             <img
                 src="/Entered.png"
                 alt="Bloomroom Main Hall"
-                className="absolute inset-0 w-full h-full object-cover animate-fade-in"
+                className={`absolute inset-0 w-full h-full object-cover animate-fade-in transition-all duration-700 ${moodFilters[mood] || ''}`}
+                style={{ filter: moodFilters[mood] ? undefined : 'none' }}
             />
 
             <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />

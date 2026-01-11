@@ -10,24 +10,16 @@ const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editName, setEditName] = useState(currentProfile?.name || '');
     const [editAvatar, setEditAvatar] = useState(currentProfile?.avatarIndex || 0);
-
-    // Avatar images (6 individual files)
     const avatarCount = 6;
-    const avatarImages = [
-        '/images/a1.png',
-        '/images/a2.png',
-        '/images/a3.png',
-        '/images/a4.png',
-        '/images/a5.png',
-        '/images/a6.png',
-    ];
 
-    const getAvatarStyle = (index) => ({
-        backgroundImage: `url(${avatarImages[index] || avatarImages[0]})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-    });
+    const getAvatarStyle = (index) => {
+        return {
+            backgroundImage: `url('/images/a${index + 1}.png')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+        };
+    };
 
     const handleSwitch = (profileId) => {
         setActiveProfile(profileId);
