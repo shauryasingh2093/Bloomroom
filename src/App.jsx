@@ -24,6 +24,10 @@ function App() {
     setCurrentProfile(profile);
   }, []);
 
+  const handleProfileChange = (newProfile) => {
+    setCurrentProfile(newProfile);
+  };
+
   const handleEnterBloomroom = () => {
     setAppState('main-hall');
   };
@@ -75,10 +79,20 @@ function App() {
             <div className="warm-overlay" />
           </div>
 
-          {appState === 'intro' ? (
+          {appState === 'intro' && (
             <VideoOpening onEnter={handleEnterBloomroom} />
-          ) : (
-            renderRoom()
+          )}
+
+          {appState === 'main-hall' && !currentRoom && !transitionRoom && (
+            <MainHall
+              onEnterRoom={handleEnterRoom}
+              currentProfile={currentProfile}
+              onProfileChange={handleProfileChange}
+            />
+          )}
+
+          {(currentRoom || transitionRoom) && (
+            renderRoomContent()
           )}
         </div>
       )}

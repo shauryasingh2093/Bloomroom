@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ProfileSwitcher from '../components/ProfileSwitcher';
 import { getCurrentProfile } from '../utils/profileManager';
 
-const MainHall = ({ onEnterRoom }) => {
+const MainHall = ({ onEnterRoom, currentProfile, onProfileChange }) => {
     const {
         tasks,
         goals,
@@ -19,13 +19,8 @@ const MainHall = ({ onEnterRoom }) => {
         updateUserName
     } = useApp();
 
-    const [currentProfile, setCurrentProfile] = useState(null);
     const [isEditingName, setIsEditingName] = useState(false);
     const [tempName, setTempName] = useState('');
-
-    useEffect(() => {
-        setCurrentProfile(getCurrentProfile());
-    }, []);
 
     useEffect(() => {
         if (isEditingName) {
@@ -80,7 +75,7 @@ const MainHall = ({ onEnterRoom }) => {
             {currentProfile && (
                 <ProfileSwitcher
                     currentProfile={currentProfile}
-                    onProfileChange={setCurrentProfile}
+                    onProfileChange={onProfileChange}
                 />
             )}
 
