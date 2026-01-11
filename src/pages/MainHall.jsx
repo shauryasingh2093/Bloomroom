@@ -16,7 +16,7 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange }) => {
         mood,
         changeMood,
         userName,
-        updateUserName
+        changeUserName
     } = useApp();
 
     const [isEditingName, setIsEditingName] = useState(false);
@@ -58,7 +58,7 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange }) => {
     const handleNameSubmit = (e) => {
         e.preventDefault();
         if (tempName.trim()) {
-            updateUserName(tempName.trim());
+            changeUserName(tempName.trim());
             setIsEditingName(false);
         }
     };
