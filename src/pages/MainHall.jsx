@@ -1,20 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/appContextCore';
 import DailyAffirmation from '../components/DailyAffirmation';
 import { motion, AnimatePresence } from 'framer-motion';
+import ProfileSwitcher from '../components/ProfileSwitcher';
+import { getCurrentProfile } from '../utils/profileManager';
 
 const MainHall = ({ onEnterRoom }) => {
     const {
-        userName,
-        changeUserName,
+        tasks,
+        goals,
+        mindDumps,
+        selfCare,
+        streak,
+        updateStreak,
         mood,
         changeMood,
-        getTodaysTasks,
-        goals
+        userName,
+        updateUserName
     } = useApp();
 
+    const [currentProfile, setCurrentProfile] = useState(null);
     const [isEditingName, setIsEditingName] = useState(false);
-    const [newName, setNewName] = useState(userName);
+    const [tempName, setTempName] = useState('');
+
+    useEffect(() => {
+        setCurrentProfile(getCurrentProfile());
+    }, []);
+
+    useEffect(() => {
+        if (isEditingName) {
+            setTempName(userName);
+        }
+    }, [isEditingName, userName]);
 
     const rooms = [
         { id: 'planning', name: 'Planning Room', label: 'Plan', pos: 'col-start-1 row-start-2' },
@@ -57,8 +74,16 @@ const MainHall = ({ onEnterRoom }) => {
     };
 
     return (
-        <div className={`fixed inset-0 w-screen h-screen overflow-hidden transition-all duration-[2000ms] ${moodFilters[mood]}`}>
-            {/* Background Image */}
+        <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-gradient-to-br from-planning-dusk via-future-dusk to-care-dusk">
+            {/* Profile Switcher */}
+            {currentProfile && (
+                <ProfileSwitcher
+                    currentProfile={currentProfile}
+                    onProfileChange={setCurrentProfile}
+                />
+            )}
+
+            {/* Cinematic Grain */}
             <img
                 src="/Entered.png"
                 alt="Bloomroom Main Hall"
@@ -76,8 +101,8 @@ const MainHall = ({ onEnterRoom }) => {
                             key={m.id}
                             onClick={() => changeMood(m.id)}
                             className={`px-4 py-1.5 rounded-full text-[10px] tracking-[0.2em] uppercase transition-all duration-500 ${mood === m.id
-                                    ? 'bg-white/20 text-white shadow-lg'
-                                    : 'text-white/40 hover:text-white/60'
+                                ? 'bg-white/20 text-white shadow-lg'
+                                : 'text-white/40 hover:text-white/60'
                                 }`}
                         >
                             {m.label}
