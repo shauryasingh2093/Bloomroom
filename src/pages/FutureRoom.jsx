@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { useApp } from '../context/appContextCore';
 import RoomWrapper from '../components/RoomWrapper';
 import GoalList from '../components/rooms/GoalList';
