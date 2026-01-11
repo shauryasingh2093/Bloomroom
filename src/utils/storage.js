@@ -1,5 +1,12 @@
 // Storage utilities for Bloomroom
 // All data is stored locally in browser localStorage
+import { getCurrentProfile } from './profileManager';
+
+// Get profile-scoped key
+const getProfileKey = (key) => {
+  const profile = getCurrentProfile();
+  return profile ? `${profile.id}_${key}` : key;
+};
 
 const STORAGE_KEYS = {
   TASKS: 'bloomroom_tasks',
@@ -17,7 +24,8 @@ const STORAGE_KEYS = {
 // Generic save function
 export const saveToStorage = (key, data) => {
   try {
-    localStorage.setItem(key, JSON.stringify(data));
+    const profileKey = getProfileKey(key);
+    localStorage.setItem(profileKey, JSON.stringify(data));
     return true;
   } catch (error) {
     console.error('Error saving to localStorage:', error);
@@ -28,7 +36,8 @@ export const saveToStorage = (key, data) => {
 // Generic load function
 export const loadFromStorage = (key, defaultValue = null) => {
   try {
-    const item = localStorage.getItem(key);
+    const profileKey = getProfileKey(key);
+    const item = localStorage.getItem(profileKey);
     return item ? JSON.parse(item) : defaultValue;
   } catch (error) {
     console.error('Error loading from localStorage:', error);

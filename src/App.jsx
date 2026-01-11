@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AppProvider } from './context/AppContext';
+import ProfileSelector from './components/ProfileSelector';
+import { getCurrentProfile, migrateExistingData } from './utils/profileManager';
 import VideoOpening from './components/VideoOpening';
 import MainHall from './pages/MainHall';
 import PlanningRoom from './pages/PlanningRoom';
@@ -10,9 +12,17 @@ import MemoryCorner from './pages/MemoryCorner';
 import VideoTransition from './components/VideoTransition';
 
 function App() {
+  const [currentProfile, setCurrentProfile] = useState(null);
   const [appState, setAppState] = useState('intro'); // 'intro', 'main-hall'
   const [currentRoom, setCurrentRoom] = useState(null); // 'planning', 'calm', 'future', 'care', 'memory', null
   const [transitionRoom, setTransitionRoom] = useState(null);
+
+  // Check for profile and migrate if needed
+  useEffect(() => {
+    migrateExistingData();
+    const profile = getCurrentProfile();
+    setCurrentProfile(profile);
+  }, []);
 
   const handleEnterBloomroom = () => {
     setAppState('main-hall');
@@ -55,19 +65,23 @@ function App() {
 
   return (
     <AppProvider>
-      <div className="fixed inset-0 w-screen h-screen bg-cream-100 overflow-hidden font-sans">
-        {/* Cinematic Layers */}
-        <div className="fixed inset-0 pointer-events-none z-[2000]">
-          <div className="cinematic-grain" />
-          <div className="warm-overlay" />
-        </div>
+      {!currentProfile ? (
+        <ProfileSelector onProfileSelected={(profile) => setCurrentProfile(profile)} />
+      ) : (
+        <div className="fixed inset-0 w-screen h-screen bg-cream-100 overflow-hidden font-sans">
+          {/* Cinematic Layers */}
+          <div className="fixed inset-0 pointer-events-none z-[2000]">
+            <div className="cinematic-grain" />
+            <div className="warm-overlay" />
+          </div>
 
-        {appState === 'intro' ? (
-          <VideoOpening onEnter={handleEnterBloomroom} />
-        ) : (
-          renderRoom()
-        )}
-      </div>
+          {appState === 'intro' ? (
+            <VideoOpening onEnter={handleEnterBloomroom} />
+          ) : (
+            renderRoom()
+          )}
+        </div>
+      )}
     </AppProvider>
   );
 }
