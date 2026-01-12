@@ -2,15 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getProfiles, setActiveProfile, deleteProfile, updateProfile } from '../utils/profileManager';
 import { useApp } from '../context/appContextCore';
+import { useAuth } from '../context/AuthContext';
 
-const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
+const ProfileSwitcher = ({ currentProfile, onProfileChange, onOpenAuth }) => {
     const { changeUserName } = useApp();
+    const { user, signOut } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [profiles, setProfiles] = useState(getProfiles());
     const [isEditing, setIsEditing] = useState(false);
     const [editName, setEditName] = useState(currentProfile?.name || '');
     const [editAvatar, setEditAvatar] = useState(currentProfile?.avatarIndex || 0);
     const avatarCount = 6;
+
+    const handleSignOut = async () => {
+        await signOut();
+        setIsOpen(false);
+        window.location.reload();
+    };
 
     const getAvatarStyle = (index) => {
         return {
@@ -184,6 +192,51 @@ const ProfileSwitcher = ({ currentProfile, onProfileChange }) => {
                                         </button>
                                     </div>
                                 ))}
+                            </div>
+
+                            {/* Cloud Sync Section */}
+                            <div className="mt-6 pt-6 border-t border-white/10">
+                                {user ? (
+                                    <button
+                                        onClick={handleSignOut}
+                                        className="w-full flex items-center justify-between p-4 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 rounded-xl group transition-all"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
+                                                <svg className="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                                </svg>
+                                            </div>
+                                            <div className="text-left">
+                                                <p className="text-cream-50 text-sm font-medium">Log Out</p>
+                                                <p className="text-red-400/60 text-xs">{user.email}</p>
+                                            </div>
+                                        </div>
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={() => {
+                                            setIsOpen(false);
+                                            onOpenAuth && onOpenAuth();
+                                        }}
+                                        className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 hover:border-green-500/40 rounded-xl group transition-all"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                                                <svg className="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                                                </svg>
+                                            </div>
+                                            <div className="text-left">
+                                                <p className="text-cream-50 text-sm font-medium">Bloomroom Cloud</p>
+                                                <p className="text-green-400/60 text-xs">Sync your journey</p>
+                                            </div>
+                                        </div>
+                                        <svg className="w-5 h-5 text-white/40 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </button>
+                                )}
                             </div>
 
                             <button

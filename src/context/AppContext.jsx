@@ -15,7 +15,7 @@ import {
 } from '../utils/storage';
 import { calculateStreak, getTodayString } from '../utils/dateHelpers';
 import { getCurrentProfile } from '../utils/profileManager';
-
+import { useDataSync } from '../hooks/useDataSync';
 
 
 export const AppProvider = ({ children }) => {
@@ -47,6 +47,12 @@ export const AppProvider = ({ children }) => {
         return activeProfile ? activeProfile.name : (profile || 'User');
     });
     const [mood, setMood] = useState(() => preferences.mood || 'calm');
+
+    // Sync Data with Supabase
+    useDataSync(
+        { tasks, goals, mindDumps, documentation, selfCare, streak, preferences },
+        { setTasks, setGoals, setMindDumps, setDocumentation, setSelfCare, setStreak, setPreferences }
+    );
 
     // Load visit on mount
     useEffect(() => {

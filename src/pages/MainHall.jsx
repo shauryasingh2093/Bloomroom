@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ProfileSwitcher from '../components/ProfileSwitcher';
 import { getCurrentProfile } from '../utils/profileManager';
 
-const MainHall = ({ onEnterRoom, currentProfile, onProfileChange }) => {
+const MainHall = ({ onEnterRoom, currentProfile, onProfileChange, onOpenAuth }) => {
     const {
         tasks,
         goals,
@@ -60,6 +60,7 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange }) => {
                 <ProfileSwitcher
                     currentProfile={currentProfile}
                     onProfileChange={onProfileChange}
+                    onOpenAuth={onOpenAuth}
                 />
             )}
 
@@ -115,12 +116,12 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange }) => {
                         <div className="absolute inset-0 bg-cream-50/0 group-hover:bg-cream-50/5 backdrop-blur-0 group-hover:backdrop-blur-[2px] rounded-full transition-all duration-700 scale-50 group-hover:scale-100" />
 
                         <div className="relative z-10 flex flex-col items-center gap-1 sm:gap-2">
-                            <span className="text-cream-50 font-extralight tracking-[0.3em] sm:tracking-[0.4em] uppercase text-[10px] sm:text-xs opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-4 group-hover:translate-y-0">
+                            <span className="text-cream-50 font-extralight tracking-[0.3em] sm:tracking-[0.4em] uppercase text-sm sm:text-base opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-4 group-hover:translate-y-0">
                                 {room.label}
                             </span>
 
                             {getRoomProgress(room.id) && (
-                                <span className="text-[10px] text-cream-200/40 tracking-[0.2em] uppercase font-light opacity-0 group-hover:opacity-100 transition-all duration-1000 delay-100">
+                                <span className="text-xs text-cream-200/40 tracking-[0.2em] uppercase font-light opacity-0 group-hover:opacity-100 transition-all duration-1000 delay-100">
                                     {getRoomProgress(room.id)}
                                 </span>
                             )}
@@ -128,8 +129,8 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange }) => {
 
                         <div className="mt-4 w-1 h-1 bg-cream-50 rounded-full opacity-40 group-hover:scale-[8] group-hover:opacity-10 transition-all duration-1000" />
 
-                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-60 transition-opacity duration-1000 whitespace-nowrap">
-                            <span className="text-[10px] text-cream-200 uppercase tracking-widest">{room.name}</span>
+                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-60 transition-opacity duration-1000 whitespace-nowrap">
+                            <span className="text-sm text-cream-200 uppercase tracking-widest">{room.name}</span>
                         </div>
                     </button>
                 ))}
