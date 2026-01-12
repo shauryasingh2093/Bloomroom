@@ -94,12 +94,13 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange, onOpenAuth }) 
             </div>
 
             {/* Overlay Content */}
-            <div className="absolute inset-0 flex flex-col items-center pt-32 pointer-events-none">
-                <div className="text-center animate-slide-up px-4 sm:px-6">
-                    <h2 className="text-2xl sm:text-4xl md:text-5xl font-extralight tracking-[0.2em] sm:tracking-[0.3em] text-cream-50 uppercase drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
+            <div className="absolute top-28 sm:top-36 left-0 right-0 flex flex-col items-center pointer-events-none z-20">
+                <div className="text-center animate-slide-up px-6 py-4 sm:px-10 sm:py-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-[2rem] sm:rounded-[3rem] shadow-2xl mx-4 w-[90%] sm:w-auto max-w-6xl inline-block">
+                    <h2 className="text-lg sm:text-3xl md:text-4xl font-extralight tracking-[0.15em] sm:tracking-[0.3em] text-cream-50 uppercase drop-shadow-lg whitespace-normal md:whitespace-nowrap leading-relaxed">
                         Hey {userName}! Welcome Home💜
                     </h2>
-                    <p className="text-cream-100 font-light mt-8 tracking-[0.2em] italic opacity-90 text-sm md:text-base drop-shadow-md max-w-2xl mx-auto">
+                    <div className="h-px w-12 sm:w-16 bg-white/20 mx-auto mt-3 mb-3 sm:mt-4 sm:mb-4" />
+                    <p className="text-cream-100 font-light tracking-[0.2em] italic opacity-90 text-[10px] sm:text-xs md:text-sm drop-shadow-md">
                         Choose a room to begin your journey
                     </p>
                 </div>

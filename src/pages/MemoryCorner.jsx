@@ -1,11 +1,66 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import RoomWrapper from '../components/RoomWrapper';
-import GratitudeJournal from '../components/rooms/GratitudeJournal';
-import JournalWithImages from '../components/memory/JournalWithImages';
+import CalendarView from '../components/common/CalendarView';
 import { useApp } from '../context/appContextCore';
+import { motion, AnimatePresence } from 'framer-motion';
+import { format, isSameDay } from 'date-fns';
+import { saveToStorage, loadFromStorage } from '../utils/storage';
+
+const JOURNAL_KEY = 'bloomroom_journal';
 
 const MemoryCorner = ({ onBack }) => {
-    const { documentation, mindDumps } = useApp();
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [journalEntries, setEntries] = useState(() => loadFromStorage(JOURNAL_KEY, []));
+    const [currentEntry, setCurrentEntry] = useState('');
+    const [currentImage, setCurrentImage] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+
+    // Load entry when date changes
+    useEffect(() => {
+        const entry = journalEntries.find(e => isSameDay(new Date(e.date), selectedDate));
+        if (entry) {
+            setCurrentEntry(entry.text);
+            setCurrentImage(entry.image);
+            setIsEditing(false); // View mode initially
+        } else {
+            setCurrentEntry('');
+            setCurrentImage(null);
+            setIsEditing(true); // Edit mode for new entries
+        }
+    }, [selectedDate, journalEntries]);
+
+    // Save Data
+    useEffect(() => {
+        saveToStorage(JOURNAL_KEY, journalEntries);
+    }, [journalEntries]);
+
+    const handleSave = () => {
+        if (!currentEntry.trim() && !currentImage) return;
+
+        const newEntryObj = {
+            id: Date.now().toString(),
+            text: currentEntry,
+            image: currentImage,
+            date: selectedDate.toISOString(),
+            isFavorite: false
+        };
+
+        // Remove existing entry for this day if any, then add new one
+        const updatedEntries = journalEntries.filter(e => !isSameDay(new Date(e.date), selectedDate));
+        setEntries([...updatedEntries, newEntryObj]);
+        setIsEditing(false);
+    };
+
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setCurrentImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     return (
         <RoomWrapper
@@ -14,73 +69,145 @@ const MemoryCorner = ({ onBack }) => {
             colorClass="bg-[#CAA188]"
             lightText={true}
         >
-            <div className="max-w-6xl mx-auto px-4 sm:px-6">
-                <header className="mb-12 sm:mb-20 text-center">
-                    <p className="text-cream-200/60 tracking-[0.4em] uppercase text-[10px] font-light mb-4">
-                        A Collection of Moments
-                    </p>
-                    <h1 className="text-3xl sm:text-5xl font-extralight tracking-[0.3em] text-cream-50 uppercase">
-                        Echoes
-                    </h1>
-                    <div className="mt-8 w-16 h-[1px] bg-white/20 mx-auto" />
-                </header>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 h-[calc(100vh-12rem)]">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-full">
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-                    {/* Left Column: Gratitude Journal & Journal with Images */}
-                    <div className="lg:col-span-1 space-y-8">
-                        <div className="bg-white/10 backdrop-blur-md p-6 sm:p-8 rounded-[2.5rem] border border-white/20 sticky top-8">
-                            <GratitudeJournal lightText={true} />
-                        </div>
-                        <div className="bg-white/10 backdrop-blur-md p-6 sm:p-8 rounded-[2.5rem] border border-white/20">
-                            <JournalWithImages lightText={true} />
+                    {/* Left Column: Calendar & Navigation */}
+                    <div className="lg:col-span-4 flex flex-col gap-8">
+                        <CalendarView
+                            selectedDate={selectedDate}
+                            onDateSelect={setSelectedDate}
+                            journalEntries={journalEntries}
+                        />
+
+                        {/* Stats / Info Card */}
+                        <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10 flex-1">
+                            <h3 className="text-xs tracking-[0.3em] uppercase font-light text-cream-200/60 mb-6">
+                                Journey Stats
+                            </h3>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-4 bg-white/5 rounded-2xl text-center">
+                                    <span className="block text-2xl font-light text-cream-50">{journalEntries.length}</span>
+                                    <span className="text-[10px] uppercase tracking-widest text-cream-200/40">Entries</span>
+                                </div>
+                                <div className="p-4 bg-white/5 rounded-2xl text-center">
+                                    <span className="block text-2xl font-light text-cream-50">
+                                        {journalEntries.filter(e => e.image).length}
+                                    </span>
+                                    <span className="text-[10px] uppercase tracking-widest text-cream-200/40">Photos</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Memories Feed - Right Column */}
-                    <div className="lg:col-span-2 space-y-8">
-                        {documentation.length === 0 && mindDumps.length === 0 ? (
-                            <div className="py-20 sm:py-40 text-center opacity-40">
-                                <p className="text-cream-50 font-light italic text-sm sm:text-base">
-                                    No memories captured yet. Your reflections will bloom here in time.
-                                </p>
-                            </div>
-                        ) : (
-                            <div className="space-y-6">
-                                {/* Combined Feed of Memories */}
-                                {[...documentation, ...mindDumps]
-                                    .filter(memory => !memory.prompt?.startsWith('Grateful for:'))
-                                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                                    .map((memory) => (
-                                        <div
-                                            key={memory.id}
-                                            className="bg-white/10 backdrop-blur-md p-6 sm:p-8 rounded-[2.5rem] border border-white/20 hover:bg-white/15 transition-all duration-500 shadow-sm"
+                    {/* Right Column: The Diary */}
+                    <div className="lg:col-span-8 h-full">
+                        <div className="bg-cream-50/10 backdrop-blur-xl h-full rounded-[3rem] border border-white/20 p-8 sm:p-12 relative overflow-hidden shadow-2xl flex flex-col">
+                            {/* Paper Texture Overlay */}
+                            <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E")` }}
+                            />
+
+                            {/* Diary Header */}
+                            <div className="flex justify-between items-end border-b border-cream-50/20 pb-6 mb-6">
+                                <div>
+                                    <h2 className="text-4xl sm:text-5xl font-serif text-cream-50 mb-2">
+                                        {format(selectedDate, 'dd')}
+                                    </h2>
+                                    <p className="text-cream-100 uppercase tracking-[0.2em] font-light text-sm">
+                                        {format(selectedDate, 'MMMM yyyy, EEEE')}
+                                    </p>
+                                </div>
+                                <div>
+                                    {!isEditing ? (
+                                        <button
+                                            onClick={() => setIsEditing(true)}
+                                            className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-full text-xs uppercase tracking-[0.2em] text-cream-50 transition-all border border-white/10"
                                         >
-                                            <div className="flex justify-between items-center mb-6">
-                                                <span className="text-[10px] tracking-[0.3em] uppercase font-light text-cream-200/80">
-                                                    {new Date(memory.createdAt).toLocaleDateString(undefined, {
-                                                        month: 'short',
-                                                        day: 'numeric',
-                                                        year: 'numeric'
-                                                    })}
-                                                </span>
-                                                <span className="text-[10px] tracking-widest text-cream-200/40 uppercase">
-                                                    {memory.prompt ? '📔 Reflection' : '💭 Mind Dump'}
-                                                </span>
+                                            Edit Entry
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={handleSave}
+                                            className="px-6 py-2 bg-cream-50 text-planning-dusk hover:bg-white rounded-full text-xs uppercase tracking-[0.2em] transition-all shadow-lg font-medium"
+                                        >
+                                            Save Entry
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Diary Content Area */}
+                            <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar">
+                                <AnimatePresence mode="wait">
+                                    {isEditing ? (
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            className="h-full flex flex-col gap-6"
+                                        >
+                                            {/* Image Upload Area */}
+                                            <div className="relative group cursor-pointer">
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleImageUpload}
+                                                    className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
+                                                />
+                                                {currentImage ? (
+                                                    <div className="relative h-64 w-full rounded-2xl overflow-hidden group-hover:opacity-90 transition-opacity">
+                                                        <img src={currentImage} alt="Day's memory" className="w-full h-full object-cover" />
+                                                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                            <span className="text-white text-xs uppercase tracking-widest">Change Photo</span>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="h-32 w-full border-2 border-dashed border-cream-50/20 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-cream-50/5 transition-colors">
+                                                        <svg className="w-6 h-6 text-cream-200/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                        </svg>
+                                                        <span className="text-xs uppercase tracking-widest text-cream-200/60">Add a photo for today</span>
+                                                    </div>
+                                                )}
                                             </div>
-                                            <p className="text-cream-100 font-light leading-relaxed mb-6 text-sm sm:text-base">
-                                                {memory.prompt || memory.content}
-                                            </p>
-                                            {memory.aiResponse && (
-                                                <div className="pt-6 border-t border-white/10">
-                                                    <p className="text-[11px] text-cream-200/60 italic font-light leading-relaxed">
-                                                        "{memory.aiResponse.reassurance}"
-                                                    </p>
+
+                                            {/* Text Area */}
+                                            <textarea
+                                                value={currentEntry}
+                                                onChange={(e) => setCurrentEntry(e.target.value)}
+                                                placeholder="Dear Diary, today was..."
+                                                className="flex-1 w-full bg-transparent border-none outline-none text-cream-50 text-lg leading-relaxed font-light resize-none placeholder:text-cream-200/20"
+                                                style={{ fontFamily: 'Georgia, serif' }}
+                                                autoFocus
+                                            />
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            className="h-full flex flex-col gap-6"
+                                        >
+                                            {currentImage && (
+                                                <div className="h-64 w-full rounded-2xl overflow-hidden shadow-lg">
+                                                    <img src={currentImage} alt="Day's memory" className="w-full h-full object-cover" />
                                                 </div>
                                             )}
-                                        </div>
-                                    ))}
+                                            {currentEntry ? (
+                                                <p className="text-cream-50 text-lg leading-relaxed font-light whitespace-pre-wrap" style={{ fontFamily: 'Georgia, serif' }}>
+                                                    {currentEntry}
+                                                </p>
+                                            ) : (
+                                                <div className="flex-1 flex items-center justify-center opacity-40">
+                                                    <p className="text-cream-200 italic font-light">No entry for this day...</p>
+                                                </div>
+                                            )}
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
-                        )}
+                        </div>
                     </div>
                 </div>
             </div>

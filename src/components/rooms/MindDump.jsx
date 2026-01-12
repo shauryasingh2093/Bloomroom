@@ -23,7 +23,7 @@ const MindDump = ({ lightText = false }) => {
             const response = getAIResponse(input);
             const formattedResponse = formatAIResponse(response);
             setCurrentResponse(formattedResponse);
-            addMindDump(input, formattedResponse);
+            // addMindDump(input, formattedResponse); // Removed to keep it ephemeral "Release & Forget"
             setInput('');
             setIsProcessing(false);
         }, 2500); // Longer delay for the cool animation
