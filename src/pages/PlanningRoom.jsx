@@ -31,7 +31,7 @@ const PlanningRoom = ({ onBack }) => {
         <RoomWrapper
             title="Planning Room"
             onBack={onBack}
-            colorClass="bg-[#726E6D]"
+            colorClass="bg-[#57595B]"
             lightText={true}
         >
             <motion.div

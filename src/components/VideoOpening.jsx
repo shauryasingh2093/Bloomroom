@@ -69,7 +69,6 @@ export default function VideoOpening({ onEnter }) {
                     playsInline
                     loop={currentVideo === 'opening'}
                     onEnded={handleVideoEnd}
-                    style={{ minWidth: '100%', minHeight: '100%' }}
                     // Ensure playback rate is set when element mounts/updates
                     onLoadedMetadata={(e) => { e.target.playbackRate = 0.8; }}
                 />
@@ -93,17 +92,43 @@ export default function VideoOpening({ onEnter }) {
                                     className="text-center mb-20 relative z-10 w-full max-w-4xl"
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 0.98, opacity: 0, filter: 'blur(10px)' }}
+                                    exit={{ opacity: 0, scale: 0.98, filter: 'blur(10px)' }}
                                     transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }} // Ultra smooth ease
                                 >
-                                    <h1 className="text-5xl md:text-7xl lg:text-8xl text-white drop-shadow-sm tracking-[0.22em] leading-tight mt-2" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 500 }}>
+                                    <h1
+                                        className="text-5xl md:text-7xl lg:text-8xl text-white drop-shadow-sm tracking-[0.22em] leading-tight mt-2"
+                                        style={{
+                                            fontFamily: "'Playfair Display', serif",
+                                            fontWeight: 500,
+                                            textShadow: `
+                                                0 1px 0 #ccc, 
+                                                0 2px 0 #c9c9c9, 
+                                                0 3px 0 #bbb, 
+                                                0 4px 0 #b9b9b9, 
+                                                0 5px 0 #aaa, 
+                                                0 6px 1px rgba(0,0,0,.1), 
+                                                0 0 5px rgba(0,0,0,.1), 
+                                                0 1px 3px rgba(0,0,0,.3), 
+                                                0 3px 5px rgba(0,0,0,.2), 
+                                                0 5px 10px rgba(0,0,0,.25), 
+                                                0 10px 10px rgba(0,0,0,.2), 
+                                                0 20px 20px rgba(0,0,0,.15)
+                                            `
+                                        }}
+                                    >
                                         Bloomroom
                                     </h1>
 
                                     {/* Increased spacing */}
-                                    <div className="h-px w-16 bg-white/40 mx-auto mt-10 mb-10" />
+                                    <div className="h-px w-16 bg-white/60 mx-auto mt-12 mb-12 shadow-[0_2px_4px_rgba(0,0,0,0.3)]" />
 
-                                    <p className="text-lg md:text-xl font-medium text-white tracking-[0.15em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] opacity-100" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                    <p
+                                        className="text-lg md:text-xl font-medium text-white tracking-[0.15em] opacity-100"
+                                        style={{
+                                            fontFamily: "'Inter', sans-serif",
+                                            textShadow: '0 2px 10px rgba(0,0,0,0.5), 0 1px 4px rgba(0,0,0,0.8)'
+                                        }}
+                                    >
                                         Your quiet space to plan, breathe, and grow
                                     </p>
                                 </motion.div>
@@ -131,6 +156,18 @@ export default function VideoOpening({ onEnter }) {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Skip Button - Repositioned to cover watermark */}
+            <button
+                onClick={() => currentVideo === 'opening' ? handleEnter() : onEnter()}
+                className="fixed bottom-4 right-4 px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white/70 hover:text-white rounded-full text-[10px] tracking-[0.25em] uppercase transition-all shadow-xl z-50 font-medium border border-white/5"
+                style={{
+                    boxShadow: '0 10px 30px -10px rgba(0,0,0,0.3)',
+                    textShadow: '0 1px 2px rgba(0,0,0,0.2)'
+                }}
+            >
+                Skip
+            </button>
         </motion.div>
     );
 }

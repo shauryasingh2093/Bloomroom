@@ -3,8 +3,8 @@ import { motion } from 'framer-motion';
 import { useApp } from '../../context/appContextCore';
 
 const DailyCalendar = ({ lightText = true }) => {
-    const { tasks } = useApp();
-    const [selectedDate, setSelectedDate] = useState(new Date());
+    const { tasks, selectedDate, setSelectedDate } = useApp();
+    const [calendarMonth, setCalendarMonth] = useState(new Date());
 
     const getDaysInMonth = (date) => {
         const year = date.getFullYear();
@@ -18,23 +18,29 @@ const DailyCalendar = ({ lightText = true }) => {
     };
 
     const getTasksForDate = (date) => {
-        const dateStr = date.toISOString().split('T')[0];
-        return tasks.filter(task => task.date === dateStr);
+        const dateStr = new Date(date.getFullYear(), date.getMonth(), date.getDate()).toISOString().split('T')[0];
+        return tasks.filter(task => task.date && task.date.split('T')[0] === dateStr);
     };
 
-    const { daysInMonth, startingDayOfWeek, year, month } = getDaysInMonth(selectedDate);
+    const handleDateClick = (date) => {
+        const dateStr = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0).toISOString();
+        setSelectedDate(dateStr);
+    };
+
+    const { daysInMonth, startingDayOfWeek, year, month } = getDaysInMonth(calendarMonth);
     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     const previousMonth = () => {
-        setSelectedDate(new Date(year, month - 1, 1));
+        setCalendarMonth(new Date(year, month - 1, 1));
     };
 
     const nextMonth = () => {
-        setSelectedDate(new Date(year, month + 1, 1));
+        setCalendarMonth(new Date(year, month + 1, 1));
     };
 
     const today = new Date().toDateString();
+    const selectedDateObj = new Date(selectedDate);
     const textColor = lightText ? 'text-cream-50' : 'text-slate-800';
 
     return (
@@ -83,19 +89,26 @@ const DailyCalendar = ({ lightText = true }) => {
                     const day = i + 1;
                     const date = new Date(year, month, day);
                     const isToday = date.toDateString() === today;
+                    const isSelected = date.toDateString() === selectedDateObj.toDateString();
                     const tasksForDay = getTasksForDate(date);
                     const completedTasks = tasksForDay.filter(t => t.completed).length;
                     const hasActivity = tasksForDay.length > 0;
+                    const allCompleted = hasActivity && completedTasks === tasksForDay.length;
 
                     return (
                         <motion.div
                             key={day}
                             whileHover={{ scale: 1.05 }}
-                            className={`aspect-square rounded-lg flex flex-col items-center justify-center text-xs transition-all cursor-pointer ${isToday
-                                    ? 'bg-white/30 text-white font-medium ring-1 ring-white/40'
-                                    : hasActivity
-                                        ? 'bg-white/10 text-white/90'
-                                        : 'bg-white/5 text-white/60 hover:bg-white/10'
+                            onClick={() => handleDateClick(date)}
+                            className={`aspect-square rounded-lg flex flex-col items-center justify-center text-xs transition-all cursor-pointer ${allCompleted
+                                    ? 'bg-green-500/30 text-white font-medium ring-1 ring-green-400/50'
+                                    : isSelected
+                                        ? 'bg-white/30 text-white font-medium ring-2 ring-white/60'
+                                        : isToday
+                                            ? 'bg-white/20 text-white font-medium ring-1 ring-white/40'
+                                            : hasActivity
+                                                ? 'bg-white/10 text-white/90'
+                                                : 'bg-white/5 text-white/60 hover:bg-white/10'
                                 }`}
                         >
                             <span>{day}</span>

@@ -1,9 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const VisionBoard = ({ lightText = true }) => {
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [showMeaning, setShowMeaning] = useState(false);
+    const fileInputRef = useRef(null);
+
+    // Load saved image or use default
+    const [visionBoardImage, setVisionBoardImage] = useState(() => {
+        return localStorage.getItem('vision_board_image') || '/vision board 2026.png';
+    });
+
+    // Check if user has uploaded a custom image
+    const hasCustomImage = visionBoardImage !== '/vision board 2026.png';
+
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64String = reader.result;
+                setVisionBoardImage(base64String);
+                localStorage.setItem('vision_board_image', base64String);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const triggerUpload = () => {
+        fileInputRef.current?.click();
+    };
 
     const visionAffirmations = [
         "I am becoming the person I've always dreamed of.",
@@ -23,13 +49,12 @@ const VisionBoard = ({ lightText = true }) => {
         <div className="space-y-6">
             {/* Vision Board Display */}
             <div className="relative group">
-                <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    className="relative overflow-hidden rounded-[2.5rem] border-2 border-white/20 bg-white/5 cursor-pointer"
+                <div
+                    className="relative overflow-hidden rounded-[2.5rem] border-2 border-white/20 bg-white/5 cursor-pointer hover:border-white/30 transition-all duration-300"
                     onClick={() => setIsFullscreen(true)}
                 >
                     <img
-                        src="/vision board 2026.png"
+                        src={visionBoardImage}
                         alt="2026 Vision Board"
                         className="w-full h-auto object-contain"
                         onError={(e) => {
@@ -39,13 +64,10 @@ const VisionBoard = ({ lightText = true }) => {
                     />
 
                     {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-8">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-8 pointer-events-none">
                         <p className="text-white text-sm tracking-widest uppercase">Click to explore</p>
                     </div>
-
-                    {/* Subtle Glow */}
-                    <div className="absolute inset-0 bg-white/5 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-                </motion.div>
+                </div>
 
                 {/* Affirmation Overlay */}
                 <AnimatePresence>
@@ -66,12 +88,28 @@ const VisionBoard = ({ lightText = true }) => {
 
             {/* Controls */}
             <div className="flex gap-4 justify-center">
+                {hasCustomImage && (
+                    <button
+                        onClick={() => setShowMeaning(!showMeaning)}
+                        className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-2xl text-xs tracking-[0.3em] uppercase transition-all"
+                    >
+                        {showMeaning ? 'Hide' : 'Read My Vision'}
+                    </button>
+                )}
+
                 <button
-                    onClick={() => setShowMeaning(!showMeaning)}
+                    onClick={triggerUpload}
                     className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-2xl text-xs tracking-[0.3em] uppercase transition-all"
                 >
-                    {showMeaning ? 'Hide' : 'Read My Vision'}
+                    {hasCustomImage ? 'Change Image' : 'Upload Image'}
                 </button>
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                    className="hidden"
+                />
             </div>
 
             {/* Fullscreen Modal */}
@@ -92,7 +130,7 @@ const VisionBoard = ({ lightText = true }) => {
                             onClick={(e) => e.stopPropagation()}
                         >
                             <img
-                                src="/vision board 2026.png"
+                                src={visionBoardImage}
                                 alt="2026 Vision Board"
                                 className="w-full h-auto object-contain rounded-3xl shadow-2xl"
                                 onError={(e) => {

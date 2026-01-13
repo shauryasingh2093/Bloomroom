@@ -29,7 +29,7 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange, onOpenAuth }) 
 
     const moods = [
         { id: 'focused', label: 'Focused', color: 'bg-blue-400' },
-        { id: 'calm', label: 'Calm', color: 'bg-sage-400' },
+        { id: 'dark', label: 'Dark', color: 'bg-slate-700' },
         { id: 'dreamy', label: 'Dreamy', color: 'bg-rose-300' },
     ];
 
@@ -49,7 +49,7 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange, onOpenAuth }) 
 
     const moodFilters = {
         focused: 'contrast-[1.1] saturate-[1.1] brightness-[0.95]',
-        calm: 'saturate-[0.8] brightness-[1.05] sepia-[0.1]',
+        dark: 'brightness-[0.7] contrast-[1.2] saturate-[0.6]',
         dreamy: 'saturate-[1.2] brightness-[1.1] contrast-[0.9] hue-rotate-[10deg]',
     };
 

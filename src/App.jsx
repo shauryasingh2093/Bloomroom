@@ -18,12 +18,27 @@ import { useAuth } from './context/AuthContext';
 import { createProfile, setActiveProfile } from './utils/profileManager';
 
 const BloomroomContent = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [currentProfile, setCurrentProfile] = useState(null);
-  const [appState, setAppState] = useState('intro'); // 'intro', 'main-hall'
+  const [appState, setAppState] = useState(() => {
+    // If we already have a user in session, we can potentially skip intro
+    // But we need to be careful about the loading state from AuthContext
+    return 'intro';
+  });
   const [currentRoom, setCurrentRoom] = useState(null);
   const [transitionRoom, setTransitionRoom] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+
+  // Initial app state setup based on auth
+  useEffect(() => {
+    if (!loading) {
+      if (user) {
+        setAppState('main-hall');
+      } else {
+        setAppState('intro');
+      }
+    }
+  }, [loading, user]);
 
   // Check for profile and migrate if needed
   useEffect(() => {

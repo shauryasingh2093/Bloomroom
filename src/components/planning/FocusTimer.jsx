@@ -6,11 +6,16 @@ const FocusTimer = ({ lightText = true }) => {
     const [timeLeft, setTimeLeft] = useState(25 * 60); // seconds
     const [isActive, setIsActive] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
+    const [customInput, setCustomInput] = useState('');
     const intervalRef = useRef(null);
 
     const durations = [
-        { value: 25, label: '25 min' },
-        { value: 50, label: '50 min' }
+        { value: 5, label: '5' },
+        { value: 10, label: '10' },
+        { value: 15, label: '15' },
+        { value: 25, label: '25' },
+        { value: 45, label: '45' },
+        { value: 60, label: '60' }
     ];
 
     useEffect(() => {
@@ -66,6 +71,31 @@ const FocusTimer = ({ lightText = true }) => {
         setTimeLeft(newDuration * 60);
         setIsActive(false);
         setIsPaused(false);
+        setCustomInput(''); // Clear custom input when selecting preset
+    };
+
+    const handleCustomInputChange = (e) => {
+        const value = e.target.value;
+        // Only allow numbers
+        if (value === '' || /^\d+$/.test(value)) {
+            setCustomInput(value);
+        }
+    };
+
+    const handleCustomDurationSet = () => {
+        const customDuration = parseInt(customInput);
+        if (customDuration && customDuration > 0 && customDuration <= 180) {
+            setDuration(customDuration);
+            setTimeLeft(customDuration * 60);
+            setIsActive(false);
+            setIsPaused(false);
+        }
+    };
+
+    const handleCustomInputKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleCustomDurationSet();
+        }
     };
 
     const formatTime = (seconds) => {
@@ -85,19 +115,41 @@ const FocusTimer = ({ lightText = true }) => {
 
             {/* Duration Selection */}
             {!isActive && (
-                <div className="flex gap-4 justify-center">
-                    {durations.map((d) => (
+                <div className="space-y-4">
+                    <div className="grid grid-cols-3 gap-2">
+                        {durations.map((d) => (
+                            <button
+                                key={d.value}
+                                onClick={() => handleDurationChange(d.value)}
+                                className={`px-4 py-2 rounded-xl text-xs tracking-wider transition-all ${duration === d.value && !customInput
+                                        ? 'bg-white/20 text-white shadow-lg'
+                                        : 'bg-white/5 text-white/60 hover:bg-white/10'
+                                    }`}
+                            >
+                                {d.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Custom Duration Input */}
+                    <div className="flex gap-2 items-center justify-center">
+                        <input
+                            type="text"
+                            value={customInput}
+                            onChange={handleCustomInputChange}
+                            onKeyPress={handleCustomInputKeyPress}
+                            placeholder="Custom (min)"
+                            className="w-28 px-4 py-2 bg-white/5 border border-white/20 rounded-xl text-xs text-white placeholder:text-white/40 text-center focus:outline-none focus:border-white/40 transition-all"
+                        />
                         <button
-                            key={d.value}
-                            onClick={() => handleDurationChange(d.value)}
-                            className={`px-6 py-3 rounded-2xl text-xs tracking-[0.2em] uppercase transition-all ${duration === d.value
-                                    ? 'bg-white/20 text-white shadow-lg'
-                                    : 'bg-white/5 text-white/60 hover:bg-white/10'
-                                }`}
+                            onClick={handleCustomDurationSet}
+                            disabled={!customInput || parseInt(customInput) <= 0 || parseInt(customInput) > 180}
+                            className="px-4 py-2 bg-white/10 hover:bg-white/20 disabled:bg-white/5 disabled:text-white/30 text-white/80 rounded-xl text-xs tracking-wider transition-all disabled:cursor-not-allowed"
                         >
-                            {d.label}
+                            Set
                         </button>
-                    ))}
+                    </div>
+                    <p className="text-center text-[10px] text-white/30 tracking-wide">1-180 minutes</p>
                 </div>
             )}
 

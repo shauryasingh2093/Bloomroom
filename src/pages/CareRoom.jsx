@@ -9,6 +9,7 @@ const CareRoom = ({ onBack }) => {
     const [question] = useState(getQuestionByTime());
     const [dailyCheckins, setDailyCheckins] = useState(() => loadDailyCheckins());
     const [checkinText, setCheckinText] = useState('');
+    const [showPastCheckins, setShowPastCheckins] = useState(false);
 
     const activities = [
         { id: 'water', label: 'Hydration', icon: '💧' },
@@ -22,8 +23,16 @@ const CareRoom = ({ onBack }) => {
 
     useEffect(() => {
         // Load today's check-in if it exists
-        if (dailyCheckins[today]) {
-            setCheckinText(dailyCheckins[today]);
+        const todayCheckin = dailyCheckins[today];
+        if (todayCheckin) {
+            // Handle both old format (string) and new format (object)
+            if (typeof todayCheckin === 'string') {
+                setCheckinText(todayCheckin);
+            } else if (todayCheckin.answer) {
+                setCheckinText(todayCheckin.answer);
+            }
+        } else {
+            setCheckinText('');
         }
     }, [today, dailyCheckins]);
 
@@ -33,7 +42,12 @@ const CareRoom = ({ onBack }) => {
 
     const handleCheckinSave = () => {
         if (checkinText.trim()) {
-            const updated = { ...dailyCheckins, [today]: checkinText };
+            const checkinEntry = {
+                question: question,
+                answer: checkinText,
+                timestamp: new Date().toISOString()
+            };
+            const updated = { ...dailyCheckins, [today]: checkinEntry };
             setDailyCheckins(updated);
             saveDailyCheckins(updated);
         }
@@ -52,11 +66,21 @@ const CareRoom = ({ onBack }) => {
 
     const last7Days = getLast7Days();
 
+    // Get all check-ins for display
+    const getAllCheckins = () => {
+        const entries = Object.entries(dailyCheckins)
+            .sort(([dateA], [dateB]) => new Date(dateB) - new Date(dateA))
+            .slice(0, 14); // Last 14 days
+        return entries;
+    };
+
+    const allCheckins = getAllCheckins();
+
     return (
         <RoomWrapper
             title="Care Room"
             onBack={onBack}
-            colorClass="bg-[#C18805]"
+            colorClass="bg-[#9F8383]"
             lightText={true}
         >
             <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -138,6 +162,61 @@ const CareRoom = ({ onBack }) => {
                             />
                             {checkinText && (
                                 <p className="mt-4 text-[10px] text-cream-200/40 italic">Auto-saved</p>
+                            )}
+                        </div>
+
+                        {/* Past Reflections Section - Always visible */}
+                        <div className="bg-white/5 backdrop-blur-md p-6 sm:p-8 rounded-[2.5rem] border border-white/10">
+                            <button
+                                onClick={() => setShowPastCheckins(!showPastCheckins)}
+                                className="w-full flex items-center justify-between text-left mb-4"
+                            >
+                                <h3 className="text-[10px] tracking-[0.3em] uppercase font-light text-cream-200/40">
+                                    My Reflections
+                                </h3>
+                                <svg
+                                    className={`w-4 h-4 text-cream-200/40 transition-transform duration-300 ${showPastCheckins ? 'rotate-180' : ''}`}
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+
+                            {showPastCheckins && (
+                                <div className="space-y-4 mt-6">
+                                    {allCheckins.length > 0 ? (
+                                        allCheckins.map(([date, entry]) => {
+                                            const checkinData = typeof entry === 'string'
+                                                ? { question: 'Daily reflection', answer: entry }
+                                                : entry;
+                                            const isToday = date === today;
+
+                                            return (
+                                                <div key={date} className={`bg-white/5 rounded-2xl p-4 border ${isToday ? 'border-white/30' : 'border-white/10'}`}>
+                                                    <p className="text-[9px] text-cream-200/40 uppercase tracking-wider mb-2">
+                                                        {isToday ? 'Today - ' : ''}{new Date(date).toLocaleDateString('en-US', {
+                                                            weekday: 'short',
+                                                            month: 'short',
+                                                            day: 'numeric'
+                                                        })}
+                                                    </p>
+                                                    <p className="text-sm text-cream-100/60 italic mb-2">
+                                                        {checkinData.question}
+                                                    </p>
+                                                    <p className="text-sm text-cream-50 font-light leading-relaxed">
+                                                        {checkinData.answer}
+                                                    </p>
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <p className="text-sm text-cream-200/40 text-center italic py-4">
+                                            Your reflections will appear here as you check in each day.
+                                        </p>
+                                    )}
+                                </div>
                             )}
                         </div>
 

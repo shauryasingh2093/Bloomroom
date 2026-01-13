@@ -7,12 +7,16 @@ import Button from '../Button';
 import './Tasks.css';
 
 const TaskList = ({ lightText = false }) => {
-    const { getTodaysTasks, addTask, getTodaysCompletedCount } = useApp();
+    const { getTasksForDate, addTask, selectedDate, setSelectedDate } = useApp();
     const [newTask, setNewTask] = useState('');
 
-    const todaysTasks = getTodaysTasks();
-    const completedCount = getTodaysCompletedCount();
-    const totalCount = todaysTasks.length;
+    const selectedDateObj = new Date(selectedDate);
+    const tasksForSelectedDate = getTasksForDate(selectedDate);
+    const completedCount = tasksForSelectedDate.filter(task => task.completed).length;
+    const totalCount = tasksForSelectedDate.length;
+
+    const isToday = selectedDateObj.toDateString() === new Date().toDateString();
+    const dateLabel = isToday ? 'Today' : selectedDateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
     const textColor = lightText ? 'text-cream-50' : 'text-slate-800';
     const subTextColor = lightText ? 'text-cream-200/60' : 'text-slate-500';
@@ -20,17 +24,45 @@ const TaskList = ({ lightText = false }) => {
     const handleAddTask = (e) => {
         e.preventDefault();
         if (newTask.trim()) {
+            // Create task with selected date
+            const task = {
+                id: Date.now().toString(),
+                text: newTask.trim(),
+                completed: false,
+                createdAt: new Date().toISOString(),
+                completedAt: null,
+                date: selectedDate,
+            };
             addTask(newTask.trim());
             setNewTask('');
         }
     };
 
+    const handleBackToToday = () => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        setSelectedDate(today.toISOString());
+    };
+
     return (
         <div className="max-w-2xl mx-auto">
             <div className="mb-12 text-center">
-                <h3 className={`text-3xl font-extralight tracking-widest ${textColor} uppercase mb-4`}>Today's Intentions</h3>
+                <h3 className={`text-3xl font-extralight tracking-widest ${textColor} uppercase mb-4`}>
+                    {isToday ? "Today's Intentions" : "Intentions"}
+                </h3>
+                <p className={`text-xs tracking-widest ${subTextColor} uppercase mb-2`}>
+                    {dateLabel}
+                </p>
+                {!isToday && (
+                    <button
+                        onClick={handleBackToToday}
+                        className={`text-xs tracking-widest ${subTextColor} hover:${textColor} uppercase transition-colors underline`}
+                    >
+                        Back to Today
+                    </button>
+                )}
                 {totalCount > 0 && (
-                    <span className={`text-sm tracking-widest ${subTextColor} uppercase`}>
+                    <span className={`block mt-2 text-sm tracking-widest ${subTextColor} uppercase`}>
                         {completedCount} of {totalCount} bloomed
                     </span>
                 )}
@@ -51,7 +83,7 @@ const TaskList = ({ lightText = false }) => {
 
             <motion.div layout className="space-y-4">
                 <AnimatePresence mode="popLayout">
-                    {todaysTasks.length === 0 ? (
+                    {tasksForSelectedDate.length === 0 ? (
                         <motion.div
                             key="empty"
                             initial={{ opacity: 0, scale: 0.9 }}
@@ -60,10 +92,12 @@ const TaskList = ({ lightText = false }) => {
                             className="py-20 text-center opacity-60"
                         >
                             <div className="text-4xl mb-4">🌸</div>
-                            <p className={`${subTextColor} font-light tracking-wide italic`}>No intentions yet. What would make today feel okay?</p>
+                            <p className={`${subTextColor} font-light tracking-wide italic`}>
+                                {isToday ? "No intentions yet. What would make today feel okay?" : "No tasks for this day."}
+                            </p>
                         </motion.div>
                     ) : (
-                        todaysTasks.map((task) => (
+                        tasksForSelectedDate.map((task) => (
                             <TaskItem key={task.id} task={task} lightText={lightText} />
                         ))
                     )}

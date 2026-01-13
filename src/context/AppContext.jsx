@@ -13,7 +13,7 @@ import {
     loadPreferences, savePreferences,
     saveLastVisit
 } from '../utils/storage';
-import { calculateStreak, getTodayString } from '../utils/dateHelpers';
+import { calculateStreak, getTodayString, getTomorrowString } from '../utils/dateHelpers';
 import { getCurrentProfile } from '../utils/profileManager';
 import { useDataSync } from '../hooks/useDataSync';
 
@@ -47,6 +47,9 @@ export const AppProvider = ({ children }) => {
         return activeProfile ? activeProfile.name : (profile || 'User');
     });
     const [mood, setMood] = useState(() => preferences.mood || 'calm');
+
+    // Selected date for viewing tasks (defaults to today)
+    const [selectedDate, setSelectedDate] = useState(() => getTodayString());
 
     // Sync Data with Supabase
     useDataSync(
@@ -98,15 +101,13 @@ export const AppProvider = ({ children }) => {
     };
 
     const postponeTask = (taskId) => {
-        const task = tasks.find(t => t.id === taskId);
-        if (task) {
-            // Remove from today
-            const updatedTasks = tasks.filter(t => t.id !== taskId);
-            setTasks(updatedTasks);
-            saveTasks(updatedTasks);
-
-            // Could add to tomorrow's tasks here if we implement future task scheduling
-        }
+        const updatedTasks = tasks.map(task =>
+            task.id === taskId
+                ? { ...task, date: getTomorrowString() }
+                : task
+        );
+        setTasks(updatedTasks);
+        saveTasks(updatedTasks);
     };
 
     const skipTask = (taskId) => {
@@ -241,6 +242,11 @@ export const AppProvider = ({ children }) => {
         return tasks.filter(task => task.date === today);
     };
 
+    // Get tasks for a specific date
+    const getTasksForDate = (dateString) => {
+        return tasks.filter(task => task.date === dateString);
+    };
+
     // Get completed tasks count for today
     const getTodaysCompletedCount = () => {
         return getTodaysTasks().filter(task => task.completed).length;
@@ -268,6 +274,11 @@ export const AppProvider = ({ children }) => {
         editTask,
         getTodaysTasks,
         getTodaysCompletedCount,
+        getTasksForDate,
+
+        // Selected date
+        selectedDate,
+        setSelectedDate,
 
         // Goal functions
         addGoal,

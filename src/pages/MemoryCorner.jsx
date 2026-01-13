@@ -66,7 +66,7 @@ const MemoryCorner = ({ onBack }) => {
         <RoomWrapper
             title="Memory Corner"
             onBack={onBack}
-            colorClass="bg-[#CAA188]"
+            colorClass="bg-[#574964]"
             lightText={true}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 h-[calc(100vh-12rem)]">

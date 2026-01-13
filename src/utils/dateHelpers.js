@@ -146,7 +146,15 @@ export const getTodayString = () => {
     return startOfDay(new Date()).toISOString();
 };
 
+// Get tomorrow's date string
+export const getTomorrowString = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return startOfDay(tomorrow).toISOString();
+};
+
 // Get current date-time string
 export const getNowString = () => {
     return new Date().toISOString();
 };
+
