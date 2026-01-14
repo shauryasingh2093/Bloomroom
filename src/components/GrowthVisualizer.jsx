@@ -75,7 +75,7 @@ const GrowthVisualizer = ({ goals = [] }) => {
                                 transform: side === -1 ? 'translateX(-100%)' : 'none'
                             }}
                         >
-                            {/* The Bloom */}
+                            {/* The Flower Bloom */}
                             <motion.div
                                 animate={{
                                     scale: [1, 1.15, 1],
@@ -86,9 +86,24 @@ const GrowthVisualizer = ({ goals = [] }) => {
                                     repeat: Infinity,
                                     delay: i * 0.5
                                 }}
-                                className={`absolute ${side === 1 ? 'right-0' : 'left-0'} top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white/30 blur-[2px] border border-white/10 flex items-center justify-center shadow-[0_0_10px_rgba(255,255,255,0.2)]`}
+                                className={`absolute ${side === 1 ? 'right-0' : 'left-0'} top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center`}
                             >
-                                <div className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_white]" />
+                                {/* 6 Petals arranged symmetrically */}
+                                {[...Array(6)].map((_, petalIndex) => {
+                                    const angle = (petalIndex * 60); // 360/6 = 60 degrees between petals
+                                    return (
+                                        <div
+                                            key={petalIndex}
+                                            className="absolute w-2 h-3.5 bg-white/40 rounded-t-full rounded-b-sm blur-[0.5px] shadow-[0_0_6px_rgba(255,255,255,0.3)]"
+                                            style={{
+                                                transform: `rotate(${angle}deg) translateY(-5px)`,
+                                                transformOrigin: 'center bottom'
+                                            }}
+                                        />
+                                    );
+                                })}
+                                {/* Center of flower */}
+                                <div className="absolute w-2 h-2 rounded-full bg-white/60 shadow-[0_0_8px_white] z-10" />
                             </motion.div>
                         </motion.div>
                     );

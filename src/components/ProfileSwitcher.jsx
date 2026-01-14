@@ -68,17 +68,17 @@ const ProfileSwitcher = ({ currentProfile, onProfileChange, onOpenAuth }) => {
 
     return (
         <>
-            {/* Profile Button */}
+            {/* Profile Button - Compact & Responsive */}
             <button
                 onClick={() => setIsOpen(true)}
-                className="fixed top-4 right-4 sm:top-6 sm:right-6 z-50 flex items-center gap-2 sm:gap-3 px-3 sm:px-5 py-2 sm:py-3 bg-white/10 hover:bg-white/20 backdrop-blur-xl rounded-full border border-white/30 transition-all group shadow-lg"
+                className="fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-50 flex items-center gap-2 sm:gap-2.5 md:gap-3 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 md:py-2.5 bg-white/10 hover:bg-white/20 backdrop-blur-xl rounded-full border border-white/20 transition-all group shadow-lg"
             >
                 <div
                     style={getAvatarStyle(currentProfile?.avatarIndex || 0)}
-                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex-shrink-0 border-2 border-white/20"
+                    className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full flex-shrink-0 border-2 border-white/20"
                 />
-                <span className="text-sm text-white font-light hidden sm:block">{currentProfile?.name}</span>
-                <svg className="w-4 h-4 text-white/60 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <span className="text-xs sm:text-sm text-white font-light hidden sm:block pr-1">{currentProfile?.name}</span>
+                <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-white/60 group-hover:text-white transition-colors hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
                 </svg>
             </button>

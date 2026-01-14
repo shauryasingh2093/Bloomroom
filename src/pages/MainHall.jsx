@@ -93,45 +93,57 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange, onOpenAuth }) 
                 </div>
             </div>
 
-            {/* Overlay Content */}
-            <div className="absolute top-28 sm:top-36 left-0 right-0 flex flex-col items-center pointer-events-none z-20">
-                <div className="text-center animate-slide-up px-6 py-4 sm:px-10 sm:py-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-[2rem] sm:rounded-[3rem] shadow-2xl mx-4 w-[90%] sm:w-auto max-w-6xl inline-block">
-                    <h2 className="text-lg sm:text-3xl md:text-4xl font-extralight tracking-[0.15em] sm:tracking-[0.3em] text-cream-50 uppercase drop-shadow-lg whitespace-normal md:whitespace-nowrap leading-relaxed">
-                        Hey {userName}! Welcome Home💜
+            {/* Glassmorphic Welcome Header - Ultra Compact Mobile */}
+            <div className="absolute top-20 sm:top-20 md:top-24 left-0 right-0 flex flex-col items-center pointer-events-none z-10">
+                <motion.div
+                    initial={{ opacity: 0, y: -30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                    className="text-center px-4 sm:px-8 md:px-10 py-3 sm:py-5 md:py-6 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-[1.5rem] sm:rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.3)] mx-4 w-auto max-w-[92%] sm:max-w-2xl md:max-w-3xl inline-block"
+                >
+                    <h2 className="text-[11px] sm:text-xl md:text-2xl lg:text-3xl font-medium tracking-[0.15em] sm:tracking-[0.25em] md:tracking-[0.3em] text-white uppercase leading-relaxed">
+                        <span className="inline-block">Hey {userName}!</span>{' '}
+                        <span className="inline-block">Welcome Home</span>{' '}
+                        <span className="text-base sm:text-xl md:text-2xl inline-block">💜</span>
                     </h2>
-                    <div className="h-px w-12 sm:w-16 bg-white/20 mx-auto mt-3 mb-3 sm:mt-4 sm:mb-4" />
-                    <p className="text-cream-100 font-light tracking-[0.2em] italic opacity-90 text-[10px] sm:text-xs md:text-sm drop-shadow-md">
+                    <div className="h-[1px] w-8 sm:w-12 md:w-16 bg-gradient-to-r from-transparent via-white/40 to-transparent mx-auto mt-2 sm:mt-3 md:mt-4 mb-2 sm:mb-3 md:mb-4" />
+                    <p className="text-white/60 font-light tracking-[0.15em] sm:tracking-[0.22em] italic text-[8px] sm:text-[10px] md:text-xs leading-relaxed">
                         Choose a room to begin your journey
                     </p>
-                </div>
+                </motion.div>
             </div>
 
-            {/* Clickable Hotspots */}
+            {/* Clickable Hotspots - Enhanced Hover */}
             <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-4 sm:gap-8 md:gap-12 p-8 sm:p-16 md:p-24 pointer-events-auto">
                 {rooms.map((room) => (
                     <button
                         key={room.id}
                         onClick={() => onEnterRoom(room.id)}
-                        className={`${room.pos} flex flex-col items-center justify-center group relative overflow-hidden transition-all duration-700`}
+                        className={`${room.pos} flex flex-col items-center justify-center group relative overflow-visible transition-all duration-500`}
                     >
-                        <div className="absolute inset-0 bg-cream-50/0 group-hover:bg-cream-50/5 backdrop-blur-0 group-hover:backdrop-blur-[2px] rounded-full transition-all duration-700 scale-50 group-hover:scale-100" />
+                        {/* Glassmorphic Hover Background */}
+                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 backdrop-blur-0 group-hover:backdrop-blur-xl rounded-full transition-all duration-500 scale-[0.85] group-hover:scale-[0.85] opacity-0 group-hover:opacity-100 border border-white/0 group-hover:border-white/20 shadow-none group-hover:shadow-[0_20px_60px_rgba(0,0,0,0.3)]" />
 
                         <div className="relative z-10 flex flex-col items-center gap-1 sm:gap-2">
-                            <span className="text-cream-50 font-extralight tracking-[0.3em] sm:tracking-[0.4em] uppercase text-sm sm:text-base opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-4 group-hover:translate-y-0">
+                            {/* Room Label */}
+                            <span className="text-white font-medium tracking-[0.3em] sm:tracking-[0.4em] uppercase text-xs sm:text-sm md:text-base opacity-70 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110">
                                 {room.label}
                             </span>
 
+                            {/* Progress Indicator */}
                             {getRoomProgress(room.id) && (
-                                <span className="text-xs text-cream-200/40 tracking-[0.2em] uppercase font-light opacity-0 group-hover:opacity-100 transition-all duration-1000 delay-100">
+                                <span className="text-[10px] sm:text-xs text-white/40 tracking-[0.2em] uppercase font-light opacity-0 group-hover:opacity-100 transition-all duration-500 delay-75">
                                     {getRoomProgress(room.id)}
                                 </span>
                             )}
                         </div>
 
-                        <div className="mt-4 w-1 h-1 bg-cream-50 rounded-full opacity-40 group-hover:scale-[8] group-hover:opacity-10 transition-all duration-1000" />
+                        {/* Center Dot */}
+                        <div className="mt-3 sm:mt-4 w-1.5 h-1.5 bg-white/60 rounded-full group-hover:scale-[6] group-hover:bg-white/20 transition-all duration-500" />
 
-                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-60 transition-opacity duration-1000 whitespace-nowrap">
-                            <span className="text-sm text-cream-200 uppercase tracking-widest">{room.name}</span>
+                        {/* Room Name on Hover */}
+                        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-80 transition-all duration-500 group-hover:-translate-y-1 whitespace-nowrap">
+                            <span className="text-[10px] sm:text-xs md:text-sm text-white uppercase tracking-[0.3em] font-light italic">{room.name}</span>
                         </div>
                     </button>
                 ))}

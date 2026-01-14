@@ -33,13 +33,13 @@ const DailyAffirmation = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ duration: 1.2, ease: "easeOut" }}
-                    className="fixed bottom-12 left-1/2 -translate-x-1/2 z-50 pointer-events-none"
+                    className="fixed bottom-6 sm:bottom-10 md:bottom-12 left-1/2 -translate-x-1/2 z-50 pointer-events-none w-full px-4 sm:px-6"
                 >
-                    <div className="bg-white/5 backdrop-blur-lg border border-white/10 px-8 py-4 rounded-full shadow-2xl">
-                        <p className="text-cream-50/70 text-[11px] tracking-[0.3em] uppercase font-light text-center flex items-center gap-4">
-                            <span className="w-8 h-[1px] bg-white/20" />
-                            {affirmation}
-                            <span className="w-8 h-[1px] bg-white/20" />
+                    <div className="bg-white/5 backdrop-blur-lg border border-white/10 px-4 sm:px-6 md:px-8 py-3 sm:py-3.5 md:py-4 rounded-full shadow-2xl max-w-[95%] sm:max-w-2xl md:max-w-3xl lg:max-w-4xl mx-auto">
+                        <p className="text-cream-50/70 text-[9px] sm:text-[10px] md:text-[11px] tracking-[0.2em] sm:tracking-[0.25em] md:tracking-[0.3em] uppercase font-light text-center flex items-center justify-center gap-2 sm:gap-3 md:gap-4">
+                            <span className="hidden sm:block w-6 md:w-8 h-[1px] bg-white/20 flex-shrink-0" />
+                            <span className="leading-relaxed">{affirmation}</span>
+                            <span className="hidden sm:block w-6 md:w-8 h-[1px] bg-white/20 flex-shrink-0" />
                         </p>
                     </div>
                 </motion.div>
