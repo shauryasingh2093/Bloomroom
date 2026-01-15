@@ -48,9 +48,9 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange, onOpenAuth }) 
 
 
     const moodFilters = {
-        focused: 'contrast-[1.1] saturate-[1.1] brightness-[0.95]',
+        focused: 'contrast-[1.05] saturate-[1.05] brightness-[0.98]',
         dark: 'brightness-[0.7] contrast-[1.2] saturate-[0.6]',
-        dreamy: 'saturate-[1.2] brightness-[1.1] contrast-[0.9] hue-rotate-[10deg]',
+        dreamy: 'saturate-[1.05] brightness-[1.02] contrast-[0.98] hue-rotate-[2deg]',
     };
 
     return (
@@ -72,7 +72,7 @@ const MainHall = ({ onEnterRoom, currentProfile, onProfileChange, onOpenAuth }) 
                 style={{ filter: moodFilters[mood] ? undefined : 'none' }}
             />
 
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
+            <div className="absolute inset-0 bg-black/15 backdrop-blur-[0.5px]" />
 
             {/* Top Bar - Mood Selector */}
             <div className="absolute top-4 sm:top-8 left-4 sm:left-8 z-50">

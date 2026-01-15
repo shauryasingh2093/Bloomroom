@@ -82,6 +82,7 @@ const CareRoom = ({ onBack }) => {
             onBack={onBack}
             colorClass="bg-[#9F8383]"
             lightText={true}
+            roomId="care"
         >
             <div className="max-w-6xl mx-auto px-4 sm:px-6">
                 <header className="mb-12 sm:mb-20 text-center">

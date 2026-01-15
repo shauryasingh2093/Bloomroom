@@ -21,6 +21,7 @@ const STORAGE_KEYS = {
   QUICK_NOTES: 'bloomroom_quick_notes',
   JOURNAL: 'bloomroom_journal',
   INTENTIONS: 'bloomroom_intentions',
+  GOAL_TARGET: 'bloomroom_goal_target',
 };
 
 // Generic save function
@@ -54,6 +55,10 @@ export const loadTasks = () => loadFromStorage(STORAGE_KEYS.TASKS, []);
 // Goals
 export const saveGoals = (goals) => saveToStorage(STORAGE_KEYS.GOALS, goals);
 export const loadGoals = () => loadFromStorage(STORAGE_KEYS.GOALS, []);
+
+// Goal Target
+export const saveGoalTarget = (target) => saveToStorage(STORAGE_KEYS.GOAL_TARGET, target);
+export const loadGoalTarget = () => loadFromStorage(STORAGE_KEYS.GOAL_TARGET, 15);
 
 // Mind Dumps
 export const saveMindDumps = (dumps) => saveToStorage(STORAGE_KEYS.MIND_DUMPS, dumps);

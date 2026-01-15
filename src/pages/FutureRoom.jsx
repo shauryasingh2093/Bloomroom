@@ -7,7 +7,7 @@ import VisionBoard from '../components/future/VisionBoard';
 import IntentionsList from '../components/future/IntentionsList';
 
 const FutureRoom = ({ onBack }) => {
-    const { goals } = useApp();
+    const { goals, goalTarget } = useApp();
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -34,6 +34,7 @@ const FutureRoom = ({ onBack }) => {
             onBack={onBack}
             colorClass="bg-[#17466F]"
             lightText={true}
+            roomId="future"
         >
             <motion.div
                 className="max-w-6xl mx-auto px-4 sm:px-6"
@@ -82,7 +83,7 @@ const FutureRoom = ({ onBack }) => {
                             <div className="absolute top-8 left-1/2 -translate-x-1/2 w-full text-center">
                                 <span className="text-white/40 text-[10px] tracking-[0.4em] uppercase font-light">Growth Pattern</span>
                             </div>
-                            <GrowthVisualizer goals={goals} />
+                            <GrowthVisualizer goals={goals} goalTarget={goalTarget} />
                         </motion.div>
                     </div>
                 </div>

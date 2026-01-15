@@ -6,9 +6,11 @@ import Button from '../Button';
 import Input from '../Input';
 
 const GoalList = ({ lightText = false }) => {
-    const { goals, addGoal, deleteGoal, toggleGoal } = useApp();
+    const { goals, addGoal, deleteGoal, toggleGoal, goalTarget, setGoalTarget } = useApp();
     const [newGoal, setNewGoal] = useState({ title: '', description: '' });
     const [showForm, setShowForm] = useState(false);
+    const [showTargetForm, setShowTargetForm] = useState(false);
+    const [targetInput, setTargetInput] = useState(goalTarget.toString());
 
     const textColor = lightText ? 'text-cream-50' : 'text-slate-800';
     const subTextColor = lightText ? 'text-cream-200/60' : 'text-slate-500';
@@ -22,17 +24,71 @@ const GoalList = ({ lightText = false }) => {
         }
     };
 
+    const handleTargetSubmit = (e) => {
+        e.preventDefault();
+        const target = parseInt(targetInput);
+        if (target > 0 && !isNaN(target)) {
+            setGoalTarget(target);
+            setShowTargetForm(false);
+        }
+    };
+
+    const completedCount = goals.filter(g => g.completed).length;
+
     return (
         <div className="w-full max-w-2xl mx-auto">
             <div className="flex justify-between items-center mb-12">
-                <h3 className={`text-sm tracking-[0.3em] uppercase font-light ${subTextColor}`}>2026 Goals</h3>
-                <button
-                    onClick={() => setShowForm(!showForm)}
-                    className={`text-xs tracking-widest uppercase font-light ${lightText ? 'text-cream-200 hover:text-white' : 'text-blue-500 hover:text-blue-700'} transition-colors`}
-                >
-                    {showForm ? 'Close' : '+ Add Goal'}
-                </button>
+                <div className="flex items-center gap-4">
+                    <h3 className={`text-sm tracking-[0.3em] uppercase font-light ${subTextColor}`}>2026 Goals</h3>
+                    <span className={`text-xs tracking-wider ${lightText ? 'text-white/40' : 'text-slate-400'}`}>
+                        {completedCount} / {goalTarget}
+                    </span>
+                </div>
+                <div className="flex gap-3">
+                    <button
+                        onClick={() => setShowTargetForm(!showTargetForm)}
+                        className={`text-xs tracking-widest uppercase font-light ${lightText ? 'text-cream-200/60 hover:text-cream-200' : 'text-slate-400 hover:text-slate-600'} transition-colors`}
+                    >
+                        {showTargetForm ? 'Close' : 'Set Target'}
+                    </button>
+                    <button
+                        onClick={() => setShowForm(!showForm)}
+                        className={`text-xs tracking-widest uppercase font-light ${lightText ? 'text-cream-200 hover:text-white' : 'text-blue-500 hover:text-blue-700'} transition-colors`}
+                    >
+                        {showForm ? 'Close' : '+ Add Goal'}
+                    </button>
+                </div>
             </div>
+
+            <AnimatePresence>
+                {showTargetForm && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden mb-8"
+                    >
+                        <form onSubmit={handleTargetSubmit} className="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 space-y-4">
+                            <div>
+                                <label className={`text-xs tracking-wider uppercase ${subTextColor} mb-2 block`}>
+                                    How many goals do you want to achieve in 2026?
+                                </label>
+                                <Input
+                                    type="number"
+                                    min="1"
+                                    value={targetInput}
+                                    onChange={(e) => setTargetInput(e.target.value)}
+                                    placeholder="15"
+                                    className={`!bg-white/10 border-white/20 ${lightText ? 'text-white placeholder:text-white/30' : 'text-slate-800'}`}
+                                />
+                            </div>
+                            <div className="flex justify-end">
+                                <Button type="submit" variant="primary" className={lightText ? '!bg-white/20 !text-white' : '!bg-slate-800'}>Set Target</Button>
+                            </div>
+                        </form>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <AnimatePresence>
                 {showForm && (
@@ -76,7 +132,7 @@ const GoalList = ({ lightText = false }) => {
                             <p className={`font-light italic ${lightText ? 'text-cream-100' : 'text-slate-500'}`}>No goals planted yet. Plant a seed to start your 2026 journey.</p>
                         </motion.div>
                     ) : (
-                        goals.map((goal) => (
+                        [...goals].reverse().map((goal) => (
                             <motion.div
                                 key={goal.id}
                                 layout

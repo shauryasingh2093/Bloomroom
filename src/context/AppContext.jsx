@@ -6,6 +6,7 @@ import { AppContext } from './appContextCore';
 import {
     loadTasks, saveTasks,
     loadGoals, saveGoals,
+    loadGoalTarget, saveGoalTarget,
     loadMindDumps, saveMindDumps,
     loadDocumentation, saveDocumentation,
     loadSelfCare, saveSelfCare,
@@ -24,6 +25,7 @@ export const AppProvider = ({ children }) => {
 
     // Goals state
     const [goals, setGoals] = useState(() => loadGoals());
+    const [goalTarget, setGoalTargetState] = useState(() => loadGoalTarget());
 
     // Mind dumps state
     const [mindDumps, setMindDumps] = useState(() => loadMindDumps());
@@ -169,6 +171,11 @@ export const AppProvider = ({ children }) => {
         saveGoals(updatedGoals);
     };
 
+    const setGoalTarget = (target) => {
+        setGoalTargetState(target);
+        saveGoalTarget(target);
+    };
+
     // Mind dump functions
     const addMindDump = (content, aiResponse) => {
         const newDump = {
@@ -285,6 +292,8 @@ export const AppProvider = ({ children }) => {
         updateGoal,
         deleteGoal,
         toggleGoal,
+        goalTarget,
+        setGoalTarget,
 
         // Mind dump functions
         addMindDump,

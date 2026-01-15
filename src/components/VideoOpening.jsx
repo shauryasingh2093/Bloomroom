@@ -18,7 +18,7 @@ export default function VideoOpening({ onEnter }) {
         // Show button after 4.5 seconds on the opening video
         const timer = setTimeout(() => {
             setShowButton(true);
-        }, 4500);
+        }, 1500);
 
         return () => clearTimeout(timer);
     }, [currentVideo]); // Re-run if video changes, though mostly for initial load
@@ -74,6 +74,8 @@ export default function VideoOpening({ onEnter }) {
                 />
 
                 {/* PURE CLEAR LOOK - No dark overlays at all, just the raw beautiful video */}
+                {/* Subtle top vignette for text readability */}
+                <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-to-b from-black/30 via-black/10 to-transparent pointer-events-none" />
             </div>
 
             {/* Overlay with Title and Button */}
@@ -96,23 +98,16 @@ export default function VideoOpening({ onEnter }) {
                                     transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }} // Ultra smooth ease
                                 >
                                     <h1
-                                        className="text-5xl md:text-7xl lg:text-8xl text-white drop-shadow-sm tracking-[0.22em] leading-tight mt-2"
+                                        className="text-5xl md:text-7xl lg:text-8xl text-white drop-shadow-2xl tracking-[0.22em] leading-tight mt-2"
                                         style={{
                                             fontFamily: "'Playfair Display', serif",
                                             fontWeight: 500,
                                             textShadow: `
-                                                0 1px 0 #ccc, 
-                                                0 2px 0 #c9c9c9, 
-                                                0 3px 0 #bbb, 
-                                                0 4px 0 #b9b9b9, 
-                                                0 5px 0 #aaa, 
-                                                0 6px 1px rgba(0,0,0,.1), 
-                                                0 0 5px rgba(0,0,0,.1), 
-                                                0 1px 3px rgba(0,0,0,.3), 
-                                                0 3px 5px rgba(0,0,0,.2), 
-                                                0 5px 10px rgba(0,0,0,.25), 
-                                                0 10px 10px rgba(0,0,0,.2), 
-                                                0 20px 20px rgba(0,0,0,.15)
+                                                0 2px 4px rgba(0,0,0,0.5),
+                                                0 4px 8px rgba(0,0,0,0.4),
+                                                0 8px 16px rgba(0,0,0,0.3),
+                                                0 16px 32px rgba(0,0,0,0.2),
+                                                0 0 40px rgba(0,0,0,0.15)
                                             `
                                         }}
                                     >
@@ -126,7 +121,7 @@ export default function VideoOpening({ onEnter }) {
                                         className="text-lg md:text-xl font-medium text-white tracking-[0.15em] opacity-100"
                                         style={{
                                             fontFamily: "'Inter', sans-serif",
-                                            textShadow: '0 2px 10px rgba(0,0,0,0.5), 0 1px 4px rgba(0,0,0,0.8)'
+                                            textShadow: '0 2px 4px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.4)'
                                         }}
                                     >
                                         Your quiet space to plan, breathe, and grow
@@ -159,8 +154,8 @@ export default function VideoOpening({ onEnter }) {
 
             {/* Skip Button - Repositioned to cover watermark */}
             <button
-                onClick={() => currentVideo === 'opening' ? handleEnter() : onEnter()}
-                className="fixed bottom-4 right-4 px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white/70 hover:text-white rounded-full text-[10px] tracking-[0.25em] uppercase transition-all shadow-xl z-50 font-medium border border-white/5"
+                onClick={onEnter}
+                className="fixed bottom-4 right-4 px-10 py-5 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white/70 hover:text-white rounded-full text-sm tracking-[0.25em] uppercase transition-all shadow-xl z-50 font-medium border border-white/5"
                 style={{
                     boxShadow: '0 10px 30px -10px rgba(0,0,0,0.3)',
                     textShadow: '0 1px 2px rgba(0,0,0,0.2)'

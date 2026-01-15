@@ -141,7 +141,7 @@ const VideoTransition = ({ roomId, isActive, onComplete }) => {
             {(transitionState === 'playing' || transitionState === 'loading') && (
                 <button
                     onClick={handleComplete}
-                    className="fixed bottom-6 right-6 px-8 py-4 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white rounded-full text-sm tracking-[0.25em] uppercase transition-all shadow-2xl z-50 font-medium"
+                    className="fixed bottom-6 right-6 px-8 py-4 bg-white/30 hover:bg-white/50 backdrop-blur-md text-white rounded-full text-sm tracking-[0.25em] uppercase transition-all shadow-2xl z-50 font-medium border border-white/40 hover:border-white/60 hover:scale-105"
                 >
                     Skip
                 </button>

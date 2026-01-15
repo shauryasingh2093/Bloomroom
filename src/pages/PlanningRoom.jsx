@@ -33,6 +33,7 @@ const PlanningRoom = ({ onBack }) => {
             onBack={onBack}
             colorClass="bg-[#57595B]"
             lightText={true}
+            roomId="planning"
         >
             <motion.div
                 className="max-w-6xl mx-auto px-4 sm:px-6"

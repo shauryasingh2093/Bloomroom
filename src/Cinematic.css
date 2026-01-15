@@ -29,10 +29,16 @@
     width: 200%;
     height: 200%;
     background-image: url("https://www.transparenttextures.com/patterns/asfalt-light.png");
-    opacity: 0.03;
+    opacity: var(--grain-opacity, 0.02);
     pointer-events: none;
     z-index: 10000;
     animation: grain 8s steps(10) infinite;
+    mix-blend-mode: overlay;
+}
+
+/* Room-specific grain adjustments */
+.room-calm .cinematic-grain {
+    --grain-opacity: 0.015;
 }
 
 @keyframes grain {
@@ -175,7 +181,31 @@
 .warm-overlay {
     position: fixed;
     inset: 0;
-    background: radial-gradient(circle at center, transparent 30%, rgba(255, 180, 100, 0.05) 100%);
+    background: radial-gradient(circle at center,
+            transparent 40%,
+            var(--overlay-tint, rgba(255, 180, 100, 0.03)) 100%);
     pointer-events: none;
     z-index: 9998;
+    opacity: var(--overlay-opacity, 0.6);
+}
+
+/* Room-specific overlay tints */
+.room-calm .warm-overlay {
+    --overlay-tint: rgba(109, 126, 106, 0.08);
+    --overlay-opacity: 0.5;
+}
+
+.room-future .warm-overlay {
+    --overlay-tint: rgba(255, 200, 150, 0.04);
+    --overlay-opacity: 0.6;
+}
+
+.room-care .warm-overlay {
+    --overlay-tint: rgba(150, 200, 150, 0.04);
+    --overlay-opacity: 0.5;
+}
+
+.room-planning .warm-overlay {
+    --overlay-tint: rgba(200, 180, 160, 0.04);
+    --overlay-opacity: 0.6;
 }

@@ -14,6 +14,7 @@ const CalmRoom = ({ onBack }) => {
             onBack={onBack}
             colorClass={isDimMode ? "bg-[#2D342B]" : "bg-[#6D7E6A]"}
             lightText={true}
+            roomId="calm"
         >
             {/* Dark Overlay for Dim Mode */}
             <div
