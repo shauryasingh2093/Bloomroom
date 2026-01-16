@@ -133,10 +133,6 @@ const MemoryCorner = ({ onBack }) => {
     };
 
     const handleDeleteEntry = async () => {
-        if (!window.confirm('Are you sure you want to delete this journal entry? This action cannot be undone.')) {
-            return;
-        }
-
         try {
             const dateStr = format(selectedDate, 'yyyy-MM-dd');
             const entry = journalEntries.find(e => e.date === dateStr);

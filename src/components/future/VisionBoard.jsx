@@ -16,7 +16,7 @@ const VisionBoard = ({ lightText = true }) => {
     const [visionBoardImage, setVisionBoardImage] = useState('/vision board 2026.png');
     const [imagePath, setImagePath] = useState(null);
 
-    // Load image from Supabase on mount
+    // Load image from Supabase on mount and when image changes
     useEffect(() => {
         const loadImage = async () => {
             if (!user) {
@@ -29,16 +29,23 @@ const VisionBoard = ({ lightText = true }) => {
                 if (metadata?.url) {
                     setVisionBoardImage(metadata.url);
                     setImagePath(metadata.path);
+                } else {
+                    // No custom image, use default
+                    setVisionBoardImage('/vision board 2026.png');
+                    setImagePath(null);
                 }
             } catch (error) {
                 console.error('Error loading vision board image:', error);
+                // On error, use default
+                setVisionBoardImage('/vision board 2026.png');
+                setImagePath(null);
             } finally {
                 setLoading(false);
             }
         };
 
         loadImage();
-    }, [user]);
+    }, [user]); // Only depend on user, not visionBoardImage to avoid infinite loop
 
     // Check if user has uploaded a custom image
     const hasCustomImage = visionBoardImage !== '/vision board 2026.png';
@@ -96,10 +103,6 @@ const VisionBoard = ({ lightText = true }) => {
 
     const handleRemoveImage = async () => {
         if (!user) return;
-
-        if (!window.confirm('Are you sure you want to remove your vision board image?')) {
-            return;
-        }
 
         try {
             setUploading(true);
