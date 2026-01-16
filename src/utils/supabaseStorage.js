@@ -192,22 +192,39 @@ export const loadImageMetadata = async (key) => {
  */
 export const removeImageCompletely = async (key, path) => {
     try {
-        // Delete from storage
-        if (path) {
-            await deleteImage(path);
+        // 1. Get current user first
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) {
+            console.error('Core error: User not authenticated for deletion');
+            return;
         }
 
-        // Delete metadata
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError || !user) return;
+        // 2. Delete from storage (try-catch specifically for storage)
+        if (path) {
+            try {
+                await deleteImage(path);
+                console.log(`Successfully deleted image from storage: ${path}`);
+            } catch (storageError) {
+                // If storage deletion fails (e.g. file already gone), we still want to clear the DB
+                console.warn('Storage deletion failed or file already missing. Continuing to clear database metadata...', storageError);
+            }
+        }
 
-        await supabase
+        // 3. Always attempt to delete metadata if we have a user
+        const { error: dbError } = await supabase
             .from('user_data')
             .delete()
             .eq('user_id', user.id)
             .eq('key', key);
+
+        if (dbError) {
+            console.error(`Database metadata deletion failed for key ${key}:`, dbError);
+            throw dbError;
+        }
+
+        console.log(`Successfully cleared metadata for key ${key}`);
     } catch (error) {
-        console.error('Error removing image completely:', error);
+        console.error('Error in removeImageCompletely:', error);
         throw error;
     }
 };

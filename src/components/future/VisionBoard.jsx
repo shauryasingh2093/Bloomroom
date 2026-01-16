@@ -107,20 +107,15 @@ const VisionBoard = ({ lightText = true }) => {
         try {
             setUploading(true);
 
-            // Remove from storage if path exists
-            if (imagePath) {
-                await removeImageCompletely('vision_board_image', imagePath);
-            }
+            // This will remove both from storage (if path exists) AND metadata from DB
+            await removeImageCompletely('vision_board_image', imagePath);
 
-            // Also remove from user_data table
-            const { data: { user: currentUser } } = await supabase.auth.getUser();
-            await supabase.from('user_data')
-                .delete()
-                .eq('user_id', currentUser.id)
-                .eq('key', 'vision_board_image');
-
+            // Update local state to show default image
             setVisionBoardImage('/vision board 2026.png');
             setImagePath(null);
+            setShowMeaning(false); // Hide affirmation if it was showing
+
+            console.log('Vision board image removed successfully');
         } catch (error) {
             console.error('Remove failed:', error);
             alert('Failed to remove image. Please try again.');
