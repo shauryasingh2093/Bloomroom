@@ -2,14 +2,18 @@ import React, { useState, useEffect } from 'react';
 import RoomWrapper from '../components/RoomWrapper';
 import { useApp } from '../context/appContextCore';
 import { getQuestionByTime } from '../utils/questionBank';
-import { saveDailyCheckins, loadDailyCheckins } from '../utils/storage';
+import { loadDailyCheckinsFromDB, saveDailyCheckin } from '../utils/supabaseData';
+import { useAuth } from '../context/AuthContext';
 
 const CareRoom = ({ onBack }) => {
+    const { user } = useAuth();
     const { selfCare, updateSelfCare } = useApp();
     const [question] = useState(getQuestionByTime());
-    const [dailyCheckins, setDailyCheckins] = useState(() => loadDailyCheckins());
+    const [dailyCheckins, setDailyCheckins] = useState({});
     const [checkinText, setCheckinText] = useState('');
     const [showPastCheckins, setShowPastCheckins] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
 
     const activities = [
         { id: 'water', label: 'Hydration', icon: '💧' },
@@ -20,6 +24,27 @@ const CareRoom = ({ onBack }) => {
 
     const today = new Date().toISOString().split('T')[0];
     const todayCare = selfCare[today] || {};
+
+    // Load check-ins from Supabase on mount
+    useEffect(() => {
+        const loadCheckins = async () => {
+            if (!user) {
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const checkins = await loadDailyCheckinsFromDB();
+                setDailyCheckins(checkins);
+            } catch (error) {
+                console.error('Error loading check-ins:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadCheckins();
+    }, [user]);
 
     useEffect(() => {
         // Load today's check-in if it exists
@@ -40,16 +65,25 @@ const CareRoom = ({ onBack }) => {
         updateSelfCare(today, id, !todayCare[id]);
     };
 
-    const handleCheckinSave = () => {
-        if (checkinText.trim()) {
-            const checkinEntry = {
-                question: question,
-                answer: checkinText,
-                timestamp: new Date().toISOString()
-            };
-            const updated = { ...dailyCheckins, [today]: checkinEntry };
+    const handleCheckinSave = async () => {
+        if (!checkinText.trim()) return;
+        if (!user) {
+            alert('Please sign in to save check-ins');
+            return;
+        }
+
+        try {
+            setSaving(true);
+            await saveDailyCheckin(today, question, checkinText);
+
+            // Reload check-ins to get updated data
+            const updated = await loadDailyCheckinsFromDB();
             setDailyCheckins(updated);
-            saveDailyCheckins(updated);
+        } catch (error) {
+            console.error('Error saving check-in:', error);
+            alert('Failed to save check-in. Please try again.');
+        } finally {
+            setSaving(false);
         }
     };
 

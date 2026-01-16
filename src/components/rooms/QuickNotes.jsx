@@ -1,32 +1,73 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { saveQuickNotes, loadQuickNotes } from '../../utils/storage';
+import { loadQuickNotesFromDB, saveQuickNote, deleteQuickNote } from '../../utils/supabaseData';
+import { useAuth } from '../../context/AuthContext';
 
 const QuickNotes = ({ lightText = false }) => {
-    const [notes, setNotes] = useState(() => loadQuickNotes());
+    const { user } = useAuth();
+    const [notes, setNotes] = useState([]);
     const [newNote, setNewNote] = useState('');
     const [isAdding, setIsAdding] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
 
+    // Load notes from Supabase
     useEffect(() => {
-        saveQuickNotes(notes);
-    }, [notes]);
+        const loadData = async () => {
+            if (!user) {
+                setLoading(false);
+                return;
+            }
 
-    const addNote = (e) => {
+            try {
+                const data = await loadQuickNotesFromDB();
+                setNotes(data);
+            } catch (error) {
+                console.error('Error loading quick notes:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadData();
+    }, [user]);
+
+    const addNote = async (e) => {
         e.preventDefault();
-        if (newNote.trim()) {
-            const note = {
-                id: Date.now().toString(),
-                text: newNote,
-                createdAt: new Date().toISOString()
-            };
-            setNotes([note, ...notes]);
+        if (!newNote.trim()) return;
+        if (!user) {
+            alert('Please sign in to add notes');
+            return;
+        }
+
+        try {
+            setSaving(true);
+            await saveQuickNote(newNote.trim());
+
+            // Reload notes
+            const data = await loadQuickNotesFromDB();
+            setNotes(data);
             setNewNote('');
             setIsAdding(false);
+        } catch (error) {
+            console.error('Error adding note:', error);
+            alert('Failed to add note. Please try again.');
+        } finally {
+            setSaving(false);
         }
     };
 
-    const deleteNote = (id) => {
-        setNotes(notes.filter(n => n.id !== id));
+    const deleteNote = async (id) => {
+        try {
+            await deleteQuickNote(id);
+
+            // Reload notes
+            const data = await loadQuickNotesFromDB();
+            setNotes(data);
+        } catch (error) {
+            console.error('Error deleting note:', error);
+            alert('Failed to delete note. Please try again.');
+        }
     };
 
     const textColor = lightText ? 'text-cream-50' : 'text-slate-800';
@@ -41,8 +82,8 @@ const QuickNotes = ({ lightText = false }) => {
                 <button
                     onClick={() => setIsAdding(!isAdding)}
                     className={`px-4 py-2 rounded-full text-[10px] tracking-[0.2em] uppercase transition-all ${isAdding
-                            ? 'bg-white/20 text-white'
-                            : 'bg-white/5 hover:bg-white/10 text-white/60'
+                        ? 'bg-white/20 text-white'
+                        : 'bg-white/5 hover:bg-white/10 text-white/60'
                         }`}
                 >
                     {isAdding ? 'Cancel' : '+ Add'}

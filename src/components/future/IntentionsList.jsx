@@ -1,29 +1,73 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { saveToStorage, loadFromStorage } from '../../utils/storage';
-
-const INTENTIONS_KEY = 'bloomroom_intentions';
+import { loadIntentionsFromDB, saveIntention, deleteIntention } from '../../utils/supabaseData';
+import { useAuth } from '../../context/AuthContext';
 
 const IntentionsList = ({ lightText = true }) => {
-    const [intentions, setIntentions] = useState(() => loadFromStorage(INTENTIONS_KEY, []));
+    const { user } = useAuth();
+    const [intentions, setIntentions] = useState([]);
     const [isAdding, setIsAdding] = useState(false);
     const [newIntention, setNewIntention] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
 
+    // Load intentions from Supabase
     useEffect(() => {
-        saveToStorage(INTENTIONS_KEY, intentions);
-    }, [intentions]);
+        const loadData = async () => {
+            if (!user) {
+                setLoading(false);
+                return;
+            }
 
-    const handleAdd = (e) => {
+            try {
+                const data = await loadIntentionsFromDB();
+                setIntentions(data);
+            } catch (error) {
+                console.error('Error loading intentions:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadData();
+    }, [user]);
+
+    const handleAdd = async (e) => {
         e.preventDefault();
-        if (newIntention.trim() && intentions.length < 5) {
-            setIntentions([...intentions, { id: Date.now(), text: newIntention.trim() }]);
+        if (!newIntention.trim() || intentions.length >= 5) return;
+        if (!user) {
+            alert('Please sign in to add intentions');
+            return;
+        }
+
+        try {
+            setSaving(true);
+            await saveIntention(newIntention.trim());
+
+            // Reload intentions
+            const data = await loadIntentionsFromDB();
+            setIntentions(data);
             setNewIntention('');
             setIsAdding(false);
+        } catch (error) {
+            console.error('Error adding intention:', error);
+            alert('Failed to add intention. Please try again.');
+        } finally {
+            setSaving(false);
         }
     };
 
-    const handleDelete = (id) => {
-        setIntentions(intentions.filter(i => i.id !== id));
+    const handleDelete = async (id) => {
+        try {
+            await deleteIntention(id);
+
+            // Reload intentions
+            const data = await loadIntentionsFromDB();
+            setIntentions(data);
+        } catch (error) {
+            console.error('Error deleting intention:', error);
+            alert('Failed to delete intention. Please try again.');
+        }
     };
 
     const textColor = lightText ? 'text-cream-50' : 'text-slate-800';

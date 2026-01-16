@@ -4,61 +4,116 @@ import CalendarView from '../components/common/CalendarView';
 import { useApp } from '../context/appContextCore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format, isSameDay } from 'date-fns';
-import { saveToStorage, loadFromStorage } from '../utils/storage';
-
-const JOURNAL_KEY = 'bloomroom_journal';
+import { uploadImage, deleteImage } from '../utils/supabaseStorage';
+import { loadJournalEntries, saveJournalEntry } from '../utils/supabaseData';
+import { useAuth } from '../context/AuthContext';
 
 const MemoryCorner = ({ onBack }) => {
+    const { user } = useAuth();
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [journalEntries, setEntries] = useState(() => loadFromStorage(JOURNAL_KEY, []));
+    const [journalEntries, setEntries] = useState([]);
     const [currentEntry, setCurrentEntry] = useState('');
     const [currentImage, setCurrentImage] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+
+    // Load journal entries from Supabase on mount
+    useEffect(() => {
+        const loadEntries = async () => {
+            if (!user) {
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const entries = await loadJournalEntries();
+                // Convert Supabase format to component format
+                const formattedEntries = entries.map(e => ({
+                    id: e.id,
+                    text: e.text,
+                    image: e.image_url ? { url: e.image_url, path: e.image_path } : null,
+                    date: e.entry_date,
+                    isFavorite: e.is_favorite
+                }));
+                setEntries(formattedEntries);
+            } catch (error) {
+                console.error('Error loading journal entries:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadEntries();
+    }, [user]);
 
     // Load entry when date changes
     useEffect(() => {
         const entry = journalEntries.find(e => isSameDay(new Date(e.date), selectedDate));
         if (entry) {
-            setCurrentEntry(entry.text);
+            setCurrentEntry(entry.text || '');
             setCurrentImage(entry.image);
-            setIsEditing(false); // View mode initially
+            setIsEditing(false);
         } else {
             setCurrentEntry('');
             setCurrentImage(null);
-            setIsEditing(true); // Edit mode for new entries
+            setIsEditing(true);
         }
     }, [selectedDate, journalEntries]);
 
-    // Save Data
-    useEffect(() => {
-        saveToStorage(JOURNAL_KEY, journalEntries);
-    }, [journalEntries]);
-
-    const handleSave = () => {
+    const handleSave = async () => {
         if (!currentEntry.trim() && !currentImage) return;
+        if (!user) {
+            alert('Please sign in to save journal entries');
+            return;
+        }
 
-        const newEntryObj = {
-            id: Date.now().toString(),
-            text: currentEntry,
-            image: currentImage,
-            date: selectedDate.toISOString(),
-            isFavorite: false
-        };
+        try {
+            setSaving(true);
+            const dateStr = format(selectedDate, 'yyyy-MM-dd');
 
-        // Remove existing entry for this day if any, then add new one
-        const updatedEntries = journalEntries.filter(e => !isSameDay(new Date(e.date), selectedDate));
-        setEntries([...updatedEntries, newEntryObj]);
-        setIsEditing(false);
+            // Save to Supabase
+            await saveJournalEntry(dateStr, currentEntry, currentImage);
+
+            // Reload entries to get updated data
+            const entries = await loadJournalEntries();
+            const formattedEntries = entries.map(e => ({
+                id: e.id,
+                text: e.text,
+                image: e.image_url ? { url: e.image_url, path: e.image_path } : null,
+                date: e.entry_date,
+                isFavorite: e.is_favorite
+            }));
+            setEntries(formattedEntries);
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Error saving journal entry:', error);
+            alert('Failed to save entry. Please try again.');
+        } finally {
+            setSaving(false);
+        }
     };
 
-    const handleImageUpload = (e) => {
+    const handleImageUpload = async (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setCurrentImage(reader.result);
-            };
-            reader.readAsDataURL(file);
+        if (!file) return;
+
+        if (!user) {
+            alert('Please sign in to upload images');
+            return;
+        }
+
+        try {
+            setUploading(true);
+            const dateStr = format(selectedDate, 'yyyy-MM-dd');
+            const { url, path } = await uploadImage(file, 'journal', `${dateStr}-${Date.now()}`);
+            setCurrentImage({ url, path });
+        } catch (error) {
+            console.error('Upload failed:', error);
+            alert('Failed to upload image. Please try again.');
+        } finally {
+            setUploading(false);
         }
     };
 
@@ -157,9 +212,13 @@ const MemoryCorner = ({ onBack }) => {
                                                 />
                                                 {currentImage ? (
                                                     <div className="relative h-64 w-full rounded-2xl overflow-hidden group-hover:opacity-90 transition-opacity">
-                                                        <img src={currentImage} alt="Day's memory" className="w-full h-full object-cover" />
+                                                        <img
+                                                            src={typeof currentImage === 'string' ? currentImage : currentImage.url}
+                                                            alt="Day's memory"
+                                                            className="w-full h-full object-cover"
+                                                        />
                                                         <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            <span className="text-white text-xs uppercase tracking-widest">Change Photo</span>
+                                                            <span className="text-white text-xs uppercase tracking-widest">{uploading ? 'Uploading...' : 'Change Photo'}</span>
                                                         </div>
                                                     </div>
                                                 ) : (
@@ -191,7 +250,11 @@ const MemoryCorner = ({ onBack }) => {
                                         >
                                             {currentImage && (
                                                 <div className="h-64 w-full rounded-2xl overflow-hidden shadow-lg">
-                                                    <img src={currentImage} alt="Day's memory" className="w-full h-full object-cover" />
+                                                    <img
+                                                        src={typeof currentImage === 'string' ? currentImage : currentImage.url}
+                                                        alt="Day's memory"
+                                                        className="w-full h-full object-cover"
+                                                    />
                                                 </div>
                                             )}
                                             {currentEntry ? (

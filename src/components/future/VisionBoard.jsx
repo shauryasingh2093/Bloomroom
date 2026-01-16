@@ -1,29 +1,109 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { uploadImage, loadImageMetadata, removeImageCompletely } from '../../utils/supabaseStorage';
+import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../lib/supabase';
 
 const VisionBoard = ({ lightText = true }) => {
+    const { user } = useAuth();
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [showMeaning, setShowMeaning] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const fileInputRef = useRef(null);
 
     // Load saved image or use default
-    const [visionBoardImage, setVisionBoardImage] = useState(() => {
-        return localStorage.getItem('vision_board_image') || '/vision board 2026.png';
-    });
+    const [visionBoardImage, setVisionBoardImage] = useState('/vision board 2026.png');
+    const [imagePath, setImagePath] = useState(null);
+
+    // Load image from Supabase on mount
+    useEffect(() => {
+        const loadImage = async () => {
+            if (!user) {
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const metadata = await loadImageMetadata('vision_board_image');
+                if (metadata?.url) {
+                    setVisionBoardImage(metadata.url);
+                    setImagePath(metadata.path);
+                }
+            } catch (error) {
+                console.error('Error loading vision board image:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadImage();
+    }, [user]);
 
     // Check if user has uploaded a custom image
     const hasCustomImage = visionBoardImage !== '/vision board 2026.png';
 
-    const handleImageUpload = (e) => {
+    const handleImageUpload = async (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const base64String = reader.result;
-                setVisionBoardImage(base64String);
-                localStorage.setItem('vision_board_image', base64String);
+        if (!file) return;
+
+        if (!user) {
+            alert('Please sign in to upload images');
+            return;
+        }
+
+        try {
+            setUploading(true);
+
+            // Delete old image if exists
+            if (imagePath) {
+                await removeImageCompletely('vision_board_image', imagePath);
+            }
+
+            // Upload new image to Supabase Storage
+            const { url, path } = await uploadImage(file, 'vision-board', 'current');
+
+            // Save metadata to database
+            const metadata = {
+                url,
+                path,
+                uploaded_at: new Date().toISOString()
             };
-            reader.readAsDataURL(file);
+
+            await loadImageMetadata('vision_board_image'); // This will trigger upsert via saveImageMetadata
+
+            // Update in user_data table
+            const { data: { user: currentUser } } = await supabase.auth.getUser();
+            await supabase.from('user_data').upsert({
+                user_id: currentUser.id,
+                key: 'vision_board_image',
+                value: metadata,
+                updated_at: new Date().toISOString()
+            });
+
+            setVisionBoardImage(url);
+            setImagePath(path);
+        } catch (error) {
+            console.error('Upload failed:', error);
+            alert('Failed to upload image. Please try again.');
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleRemoveImage = async () => {
+        if (!user) return;
+
+        try {
+            setUploading(true);
+            await removeImageCompletely('vision_board_image', imagePath);
+            setVisionBoardImage('/vision board 2026.png');
+            setImagePath(null);
+        } catch (error) {
+            console.error('Remove failed:', error);
+            alert('Failed to remove image. Please try again.');
+        } finally {
+            setUploading(false);
         }
     };
 
@@ -44,6 +124,16 @@ const VisionBoard = ({ lightText = true }) => {
     );
 
     const textColor = lightText ? 'text-cream-50' : 'text-slate-800';
+
+    if (loading) {
+        return (
+            <div className="space-y-6">
+                <div className="relative overflow-hidden rounded-[2.5rem] border-2 border-white/20 bg-white/5 h-96 flex items-center justify-center">
+                    <p className="text-cream-200/60 text-sm tracking-widest uppercase">Loading...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -67,6 +157,13 @@ const VisionBoard = ({ lightText = true }) => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-8 pointer-events-none">
                         <p className="text-white text-sm tracking-widest uppercase">Click to explore</p>
                     </div>
+
+                    {/* Uploading Overlay */}
+                    {uploading && (
+                        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center">
+                            <p className="text-white text-sm tracking-widest uppercase">Uploading...</p>
+                        </div>
+                    )}
                 </div>
 
                 {/* Affirmation Overlay */}
@@ -87,11 +184,12 @@ const VisionBoard = ({ lightText = true }) => {
             </div>
 
             {/* Controls */}
-            <div className="flex gap-4 justify-center">
+            <div className="flex gap-4 justify-center flex-wrap">
                 {hasCustomImage && (
                     <button
                         onClick={() => setShowMeaning(!showMeaning)}
-                        className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-2xl text-xs tracking-[0.3em] uppercase transition-all"
+                        className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-2xl text-xs tracking-[0.3em] uppercase transition-all disabled:opacity-50"
+                        disabled={uploading}
                     >
                         {showMeaning ? 'Hide' : 'Read My Vision'}
                     </button>
@@ -99,10 +197,22 @@ const VisionBoard = ({ lightText = true }) => {
 
                 <button
                     onClick={triggerUpload}
-                    className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-2xl text-xs tracking-[0.3em] uppercase transition-all"
+                    className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-2xl text-xs tracking-[0.3em] uppercase transition-all disabled:opacity-50"
+                    disabled={uploading || !user}
                 >
-                    {hasCustomImage ? 'Change Image' : 'Upload Image'}
+                    {uploading ? 'Uploading...' : hasCustomImage ? 'Change Image' : 'Upload Image'}
                 </button>
+
+                {hasCustomImage && (
+                    <button
+                        onClick={handleRemoveImage}
+                        className="px-6 py-3 bg-white/10 hover:bg-red-500/20 text-white hover:text-red-200 rounded-2xl text-xs tracking-[0.3em] uppercase transition-all disabled:opacity-50"
+                        disabled={uploading || !user}
+                    >
+                        Remove Image
+                    </button>
+                )}
+
                 <input
                     type="file"
                     ref={fileInputRef}
@@ -111,6 +221,12 @@ const VisionBoard = ({ lightText = true }) => {
                     className="hidden"
                 />
             </div>
+
+            {!user && (
+                <p className="text-center text-cream-200/60 text-xs tracking-widest uppercase">
+                    Sign in to upload your own vision board
+                </p>
+            )}
 
             {/* Fullscreen Modal */}
             <AnimatePresence>

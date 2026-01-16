@@ -22,6 +22,7 @@ const STORAGE_KEYS = {
   JOURNAL: 'bloomroom_journal',
   INTENTIONS: 'bloomroom_intentions',
   GOAL_TARGET: 'bloomroom_goal_target',
+  VISION_BOARD_IMAGE: 'bloomroom_vision_board_image',
 };
 
 // Generic save function
@@ -91,6 +92,11 @@ export const loadDailyCheckins = () => loadFromStorage(STORAGE_KEYS.DAILY_CHECKI
 // Quick Notes
 export const saveQuickNotes = (notes) => saveToStorage(STORAGE_KEYS.QUICK_NOTES, notes);
 export const loadQuickNotes = () => loadFromStorage(STORAGE_KEYS.QUICK_NOTES, []);
+
+// Vision Board Image
+export const saveVisionBoardImage = (imageData) => saveToStorage(STORAGE_KEYS.VISION_BOARD_IMAGE, imageData);
+export const loadVisionBoardImage = () => loadFromStorage(STORAGE_KEYS.VISION_BOARD_IMAGE, null);
+export const removeVisionBoardImage = () => saveToStorage(STORAGE_KEYS.VISION_BOARD_IMAGE, null);
 
 // Clear all data (for reset functionality)
 export const clearAllData = () => {

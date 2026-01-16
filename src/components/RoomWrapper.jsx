@@ -1,15 +1,44 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
+import { startRoomVisit, endRoomVisit } from '../utils/roomLogging';
+import { useAuth } from '../context/AuthContext';
 import '../Cinematic.css';
 
 const RoomWrapper = ({ children, title, onBack, colorClass = 'bg-cream-100', lightText = false, roomId = '' }) => {
+    const { user } = useAuth();
+    const visitIdRef = useRef(null);
     const textColor = lightText ? 'text-cream-50' : 'text-slate-800';
     const subTextColor = lightText ? 'text-cream-200/60' : 'text-slate-600';
     const borderColor = lightText ? 'border-white/10' : 'border-slate-200/50';
 
     // Generate room-specific class for filter customization
     const roomClass = roomId ? `room-${roomId}` : '';
+
+    // Track room visits
+    useEffect(() => {
+        const trackVisit = async () => {
+            if (!user || !roomId) return;
+
+            try {
+                const visitId = await startRoomVisit(roomId);
+                visitIdRef.current = visitId;
+            } catch (error) {
+                console.error('Error starting room visit:', error);
+            }
+        };
+
+        trackVisit();
+
+        // End visit on unmount
+        return () => {
+            if (visitIdRef.current) {
+                endRoomVisit(visitIdRef.current).catch(error => {
+                    console.error('Error ending room visit:', error);
+                });
+            }
+        };
+    }, [user, roomId]);
 
     return (
         <motion.div
