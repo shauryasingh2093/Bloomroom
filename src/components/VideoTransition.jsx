@@ -103,22 +103,17 @@ const VideoTransition = ({ roomId, isActive, onComplete }) => {
     return (
         <div className={overlayClass}>
             {!videoError && roomConfig?.videoPath ? (
-                <>
-                    <video
-                        ref={videoRef}
-                        className="transition-video"
-                        src={roomConfig.videoPath}
-                        onLoadedData={handleVideoLoaded}
-                        onEnded={handleVideoEnded}
-                        onError={handleVideoError}
-                        playsInline
-                        muted
-                        preload="auto"
-                    />
-                    {transitionState === 'loading' && (
-                        <div className="video-loading">Loading...</div>
-                    )}
-                </>
+                <video
+                    ref={videoRef}
+                    className="transition-video"
+                    src={roomConfig.videoPath}
+                    onLoadedData={handleVideoLoaded}
+                    onEnded={handleVideoEnded}
+                    onError={handleVideoError}
+                    playsInline
+                    muted
+                    preload="auto"
+                />
             ) : roomConfig ? (
                 <div
                     className="video-fallback fade-in"
