@@ -108,12 +108,62 @@ const MemoryCorner = ({ onBack }) => {
             setUploading(true);
             const dateStr = format(selectedDate, 'yyyy-MM-dd');
             const { url, path } = await uploadImage(file, 'journal', `${dateStr}-${Date.now()}`);
-            setCurrentImage({ url, path });
+            const imageData = { url, path };
+            setCurrentImage(imageData);
+
+            // Auto-save after image upload
+            await saveJournalEntry(dateStr, currentEntry, imageData);
+
+            // Reload entries to show updated data
+            const entries = await loadJournalEntries();
+            const formattedEntries = entries.map(e => ({
+                id: e.id,
+                text: e.text,
+                image: e.image_url ? { url: e.image_url, path: e.image_path } : null,
+                date: e.entry_date,
+                isFavorite: e.is_favorite
+            }));
+            setEntries(formattedEntries);
         } catch (error) {
             console.error('Upload failed:', error);
             alert('Failed to upload image. Please try again.');
         } finally {
             setUploading(false);
+        }
+    };
+
+    const handleDeleteEntry = async () => {
+        if (!window.confirm('Are you sure you want to delete this journal entry? This action cannot be undone.')) {
+            return;
+        }
+
+        try {
+            const dateStr = format(selectedDate, 'yyyy-MM-dd');
+            const entry = journalEntries.find(e => e.date === dateStr);
+
+            if (entry && entry.id) {
+                const { deleteJournalEntry } = await import('../utils/supabaseData');
+                await deleteJournalEntry(entry.id);
+
+                // Reload entries
+                const entries = await loadJournalEntries();
+                const formattedEntries = entries.map(e => ({
+                    id: e.id,
+                    text: e.text,
+                    image: e.image_url ? { url: e.image_url, path: e.image_path } : null,
+                    date: e.entry_date,
+                    isFavorite: e.is_favorite
+                }));
+                setEntries(formattedEntries);
+
+                // Clear current entry
+                setCurrentEntry('');
+                setCurrentImage(null);
+                setIsEditing(true);
+            }
+        } catch (error) {
+            console.error('Error deleting entry:', error);
+            alert('Failed to delete entry. Please try again.');
         }
     };
 
@@ -173,20 +223,31 @@ const MemoryCorner = ({ onBack }) => {
                                         {format(selectedDate, 'MMMM yyyy, EEEE')}
                                     </p>
                                 </div>
-                                <div>
+                                <div className="flex gap-3">
                                     {!isEditing ? (
-                                        <button
-                                            onClick={() => setIsEditing(true)}
-                                            className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-full text-xs uppercase tracking-[0.2em] text-cream-50 transition-all border border-white/10"
-                                        >
-                                            Edit Entry
-                                        </button>
+                                        <>
+                                            <button
+                                                onClick={() => setIsEditing(true)}
+                                                className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-full text-xs uppercase tracking-[0.2em] text-cream-50 transition-all border border-white/10"
+                                            >
+                                                Edit Entry
+                                            </button>
+                                            {(currentEntry || currentImage) && (
+                                                <button
+                                                    onClick={handleDeleteEntry}
+                                                    className="px-6 py-2 bg-red-500/20 hover:bg-red-500/30 rounded-full text-xs uppercase tracking-[0.2em] text-red-200 transition-all border border-red-400/30"
+                                                >
+                                                    Delete Entry
+                                                </button>
+                                            )}
+                                        </>
                                     ) : (
                                         <button
                                             onClick={handleSave}
-                                            className="px-6 py-2 bg-cream-50 text-planning-dusk hover:bg-white rounded-full text-xs uppercase tracking-[0.2em] transition-all shadow-lg font-medium"
+                                            disabled={saving}
+                                            className="px-6 py-2 bg-cream-50 text-planning-dusk hover:bg-white rounded-full text-xs uppercase tracking-[0.2em] transition-all shadow-lg font-medium disabled:opacity-50"
                                         >
-                                            Save Entry
+                                            {saving ? 'Saving...' : 'Save Entry'}
                                         </button>
                                     )}
                                 </div>

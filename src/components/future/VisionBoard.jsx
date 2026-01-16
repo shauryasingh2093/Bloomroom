@@ -57,29 +57,32 @@ const VisionBoard = ({ lightText = true }) => {
 
             // Delete old image if exists
             if (imagePath) {
-                await removeImageCompletely('vision_board_image', imagePath);
+                try {
+                    await removeImageCompletely('vision_board_image', imagePath);
+                } catch (error) {
+                    console.warn('Error removing old image:', error);
+                }
             }
 
             // Upload new image to Supabase Storage
-            const { url, path } = await uploadImage(file, 'vision-board', 'current');
+            const { url, path } = await uploadImage(file, 'vision-board', `vision-${Date.now()}`);
 
-            // Save metadata to database
+            // Save metadata to user_data table
             const metadata = {
                 url,
                 path,
                 uploaded_at: new Date().toISOString()
             };
 
-            await loadImageMetadata('vision_board_image'); // This will trigger upsert via saveImageMetadata
-
-            // Update in user_data table
             const { data: { user: currentUser } } = await supabase.auth.getUser();
-            await supabase.from('user_data').upsert({
+            const { error } = await supabase.from('user_data').upsert({
                 user_id: currentUser.id,
                 key: 'vision_board_image',
                 value: metadata,
                 updated_at: new Date().toISOString()
             });
+
+            if (error) throw error;
 
             setVisionBoardImage(url);
             setImagePath(path);
@@ -94,9 +97,25 @@ const VisionBoard = ({ lightText = true }) => {
     const handleRemoveImage = async () => {
         if (!user) return;
 
+        if (!window.confirm('Are you sure you want to remove your vision board image?')) {
+            return;
+        }
+
         try {
             setUploading(true);
-            await removeImageCompletely('vision_board_image', imagePath);
+
+            // Remove from storage if path exists
+            if (imagePath) {
+                await removeImageCompletely('vision_board_image', imagePath);
+            }
+
+            // Also remove from user_data table
+            const { data: { user: currentUser } } = await supabase.auth.getUser();
+            await supabase.from('user_data')
+                .delete()
+                .eq('user_id', currentUser.id)
+                .eq('key', 'vision_board_image');
+
             setVisionBoardImage('/vision board 2026.png');
             setImagePath(null);
         } catch (error) {
