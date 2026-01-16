@@ -54,11 +54,11 @@ export const uploadImage = async (file, type, filename = null) => {
         if (error) throw error;
 
         // Get public URL
-        const { data: { publicUrl } } = supabase.storage
+        const { data: publicUrlData } = supabase.storage
             .from('user-images')
             .getPublicUrl(filePath);
 
-        return { url: publicUrl, path: filePath };
+        return { url: publicUrlData.publicUrl, path: filePath };
     } catch (error) {
         console.error('Error uploading image:', error);
         throw error;

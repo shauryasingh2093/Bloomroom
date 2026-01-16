@@ -1,3 +1,13 @@
+/**
+ * useDataSync Hook
+ * 
+ * Syncs user data between Supabase (source of truth) and localStorage (cache)
+ * 
+ * ⚠️ localStorage Usage: Caching only, NOT source-of-truth
+ * - localStorage provides offline access and instant load
+ * - Supabase is the authoritative data source
+ * - Changes sync to Supabase with debouncing
+ */
 
 import { useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';

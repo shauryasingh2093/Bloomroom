@@ -1,11 +1,78 @@
 // Storage utilities for Bloomroom
-// All data is stored locally in browser localStorage
+// 
+// ⚠️ IMPORTANT: localStorage is for UX ONLY, never for source-of-truth data
+// 
+// localStorage Usage Rules:
+// ✅ DO use for: Preferences, UI state, profile management, caching synced data
+// ❌ DON'T use for: Critical user data, anything that can't be regenerated
+// 
+// Source of truth for user data is Supabase. localStorage is for:
+// - Fast local caching (offline support)
+// - User preferences and settings
+// - Profile management (multi-user browser support)
+// - Temporary state that enhances UX
+//
 import { getCurrentProfile } from './profileManager';
 
 // Get profile-scoped key
 const getProfileKey = (key) => {
   const profile = getCurrentProfile();
   return profile ? `${profile.id}_${key}` : key;
+};
+
+
+// Storage version for schema migration safety
+const STORAGE_VERSION = '1.0';
+const VERSION_KEY = 'bloomroom_storage_version';
+
+// Check and handle storage version
+export const checkStorageVersion = () => {
+  try {
+    const currentVersion = localStorage.getItem(VERSION_KEY);
+
+    if (!currentVersion) {
+      // First time setup
+      localStorage.setItem(VERSION_KEY, STORAGE_VERSION);
+      return { isValid: true, isFirstTime: true };
+    }
+
+    if (currentVersion !== STORAGE_VERSION) {
+      console.warn(`Storage version mismatch. Expected ${STORAGE_VERSION}, found ${currentVersion}`);
+      return { isValid: false, oldVersion: currentVersion, newVersion: STORAGE_VERSION };
+    }
+
+    return { isValid: true, isFirstTime: false };
+  } catch (error) {
+    console.error('Error checking storage version:', error);
+    return { isValid: true, isFirstTime: false }; // Fail gracefully
+  }
+};
+
+// Migrate or clear storage on version mismatch
+export const handleStorageVersionMismatch = (clearAll = false) => {
+  try {
+    if (clearAll) {
+      // Clear all cached data but keep profiles and preferences
+      const keysToKeep = [
+        STORAGE_KEYS.PREFERENCES,
+        'bloomroom_profiles',
+        'bloomroom_active_profile'
+      ];
+
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('bloomroom_') && !keysToKeep.includes(key)) {
+          localStorage.removeItem(key);
+        }
+      }
+    }
+
+    // Update version
+    localStorage.setItem(VERSION_KEY, STORAGE_VERSION);
+    console.log(`Storage migrated to version ${STORAGE_VERSION}`);
+  } catch (error) {
+    console.error('Error handling storage version mismatch:', error);
+  }
 };
 
 const STORAGE_KEYS = {

@@ -1,5 +1,9 @@
 // Profile Management System
 // Handles creation, switching, and deletion of user profiles
+//
+// ⚠️ localStorage Usage: Profile management is UX-only data
+// Profiles enable multi-user browser support but are not source-of-truth
+// User data is stored in Supabase and scoped by authentication, not profiles
 
 const PROFILES_KEY = 'bloomroom_profiles';
 const ACTIVE_PROFILE_KEY = 'bloomroom_active_profile';
