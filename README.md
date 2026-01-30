@@ -470,9 +470,9 @@ This project is private and all rights are reserved. If you'd like to use this c
 ## 📧 Contact
 
 For questions, feedback, or collaboration:
-- **Email**: your.email@example.com
-- **GitHub**: [@yourusername](https://github.com/yourusername)
-- **Twitter**: [@yourhandle](https://twitter.com/yourhandle)
+- **Email**: shaurya.020singh@gmail.com
+- **GitHub**: [@shauryasingh2093](https://github.com/shauryasingh2093)
+
 
 ---
 
