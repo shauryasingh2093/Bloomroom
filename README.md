@@ -372,6 +372,6 @@ If you like this project, please consider:
 
 **Built with ❤️ for intentional living and mindful productivity**
 
-[🏡 Visit Bloomroom](https://bloomroomvercel.app) • [📖 Documentation](./PRODUCT_SUMMARY.md) • [🚀 Deploy](./DEPLOYMENT.md)
+[🏡 Visit Bloomroom](bloomroom.vercel.app) • [📖 Documentation](./PRODUCT_SUMMARY.md) • [🚀 Deploy](./DEPLOYMENT.md)
 
 </div>
