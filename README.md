@@ -47,47 +47,7 @@ Bloomroom is an interactive wellness application that uses a **multi-room house 
 
 ---
 
-## 🚀 Quick Start
 
-### Prerequisites
-- **Node.js** 18+ and **npm** 9+
-- **Supabase Account** (optional, for cloud sync)
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/bloomroom.git
-cd bloomroom
-
-# Install dependencies
-npm install
-
-# Create environment file
-cp .env.example .env
-
-# Add your Supabase credentials (optional)
-# Edit .env and add:
-# VITE_SUPABASE_URL=your_supabase_url
-# VITE_SUPABASE_ANON_KEY=your_supabase_key
-
-# Start development server
-npm run dev
-```
-
-Visit **http://localhost:5173** to see your app! 🎉
-
-### Build for Production
-
-```bash
-# Create optimized production build
-npm run build
-
-# Preview production build locally
-npm run preview
-```
-
----
 
 ## 🛠️ Tech Stack
 
@@ -280,80 +240,7 @@ Each profile has isolated data and settings.
 
 ---
 
-## 🔧 Development
 
-### Available Scripts
-
-```bash
-npm run dev      # Start development server (http://localhost:5173)
-npm run build    # Build for production
-npm run preview  # Preview production build
-npm run lint     # Run ESLint
-```
-
-### Environment Variables
-
-Create a `.env` file in the root directory:
-
-```bash
-# Supabase Configuration (optional)
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key-here
-```
-
-### Code Style
-- Functional components with hooks
-- Tailwind CSS for styling
-- ESLint for code quality
-- Prettier for formatting (recommended)
-
----
-
-## 🚀 Deployment
-
-### Deploy to Vercel (Recommended)
-
-1. **Push to GitHub**
-   ```bash
-   git add .
-   git commit -m "Initial commit"
-   git push origin main
-   ```
-
-2. **Import to Vercel**
-   - Go to [vercel.com](https://vercel.com)
-   - Click "Import Project"
-   - Select your GitHub repository
-   - Add environment variables (if using Supabase)
-   - Click "Deploy"
-
-3. **Done!** Your app is live with HTTPS and CDN 🎉
-
-### Other Platforms
-- **Netlify**: Similar to Vercel, drag-and-drop deployment
-- **GitHub Pages**: For static hosting (no backend)
-- **Railway**: For full-stack deployment
-
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions.
-
----
-
-## 📱 PWA Installation
-
-### On Mobile (iOS/Android)
-1. Open Bloomroom in Safari (iOS) or Chrome (Android)
-2. Tap the **Share** button
-3. Select **"Add to Home Screen"**
-4. Tap **"Add"**
-5. Launch from your home screen like a native app!
-
-### On Desktop (Chrome/Edge)
-1. Open Bloomroom in Chrome or Edge
-2. Click the **install icon** in the address bar
-3. Click **"Install"**
-4. Launch from your applications folder!
-
----
 
 ## 🎨 Design Philosophy
 
@@ -436,13 +323,8 @@ This project is private and all rights are reserved. If you'd like to use this c
 
 ---
 
-## 📚 Documentation
 
-- **[PRODUCT_SUMMARY.md](./PRODUCT_SUMMARY.md)** - Complete product overview and features
-- **[TECH_STACK.md](./TECH_STACK.md)** - Detailed technology breakdown
-- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Deployment guide and best practices
 
----
 
 ## 🐛 Known Issues
 
@@ -490,6 +372,6 @@ If you like this project, please consider:
 
 **Built with ❤️ for intentional living and mindful productivity**
 
-[🏡 Visit Bloomroom](https://your-bloomroom-url.vercel.app) • [📖 Documentation](./PRODUCT_SUMMARY.md) • [🚀 Deploy](./DEPLOYMENT.md)
+[🏡 Visit Bloomroom](https://bloomroomvercel.app) • [📖 Documentation](./PRODUCT_SUMMARY.md) • [🚀 Deploy](./DEPLOYMENT.md)
 
 </div>
