@@ -311,7 +311,6 @@ This project is private and all rights are reserved. If you'd like to use this c
 - [Vite](https://vitejs.dev) - Build tool by Evan You
 - [Tailwind CSS](https://tailwindcss.com) - CSS framework by Adam Wathan
 - [Framer Motion](https://www.framer.com/motion) - Animation library by Framer
-- [GSAP](https://greensock.com/gsap) - Animation engine by GreenSock
 - [Supabase](https://supabase.com) - Backend platform by Supabase Inc.
 - [Vercel](https://vercel.com) - Hosting platform by Vercel Inc.
 
