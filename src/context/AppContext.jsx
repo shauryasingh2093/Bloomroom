@@ -65,26 +65,37 @@ export const AppProvider = ({ children }) => {
     }, []);
 
     // Task functions
-    const addTask = (task) => {
+    const addTask = (taskText, date = getTodayString(), recurring = 'none') => {
         const newTask = {
             id: Date.now().toString(),
-            text: task,
+            text: taskText,
             completed: false,
             createdAt: new Date().toISOString(),
             completedAt: null,
-            date: getTodayString(),
+            date: date,
+            recurring: recurring,
+            completedDates: [],
+            excludedDates: [],
         };
         const updatedTasks = [...tasks, newTask];
         setTasks(updatedTasks);
         saveTasks(updatedTasks);
     };
 
-    const completeTask = (taskId) => {
-        const updatedTasks = tasks.map(task =>
-            task.id === taskId
-                ? { ...task, completed: true, completedAt: new Date().toISOString() }
-                : task
-        );
+    const completeTask = (taskId, dateString = getTodayString()) => {
+        const updatedTasks = tasks.map(task => {
+            if (task.id === taskId) {
+                if (task.recurring && task.recurring !== 'none') {
+                    const completedDates = [...(task.completedDates || [])];
+                    if (!completedDates.includes(dateString)) {
+                        completedDates.push(dateString);
+                    }
+                    return { ...task, completedDates };
+                }
+                return { ...task, completed: true, completedAt: new Date().toISOString() };
+            }
+            return task;
+        });
         setTasks(updatedTasks);
         saveTasks(updatedTasks);
 
@@ -92,33 +103,65 @@ export const AppProvider = ({ children }) => {
         updateStreakWithActivity();
     };
 
-    const uncompleteTask = (taskId) => {
-        const updatedTasks = tasks.map(task =>
-            task.id === taskId
-                ? { ...task, completed: false, completedAt: null }
-                : task
-        );
+    const uncompleteTask = (taskId, dateString = getTodayString()) => {
+        const updatedTasks = tasks.map(task => {
+            if (task.id === taskId) {
+                if (task.recurring && task.recurring !== 'none') {
+                    const completedDates = (task.completedDates || []).filter(d => d !== dateString);
+                    return { ...task, completedDates };
+                }
+                return { ...task, completed: false, completedAt: null };
+            }
+            return task;
+        });
         setTasks(updatedTasks);
         saveTasks(updatedTasks);
     };
 
-    const postponeTask = (taskId) => {
-        const updatedTasks = tasks.map(task =>
-            task.id === taskId
-                ? { ...task, date: getTomorrowString() }
-                : task
-        );
-        setTasks(updatedTasks);
-        saveTasks(updatedTasks);
+    const postponeTask = (taskId, dateString = getTodayString()) => {
+        const taskToPostpone = tasks.find(t => t.id === taskId);
+        if (taskToPostpone && taskToPostpone.recurring && taskToPostpone.recurring !== 'none') {
+            // For recurring tasks, postpone means skip for today (it will still be there tomorrow)
+            deleteTask(taskId, dateString);
+        } else {
+            const updatedTasks = tasks.map(task =>
+                task.id === taskId
+                    ? { ...task, date: getTomorrowString() }
+                    : task
+            );
+            setTasks(updatedTasks);
+            saveTasks(updatedTasks);
+        }
     };
 
-    const skipTask = (taskId) => {
-        const updatedTasks = tasks.filter(t => t.id !== taskId);
-        setTasks(updatedTasks);
-        saveTasks(updatedTasks);
+    const skipTask = (taskId, dateString = getTodayString()) => {
+        deleteTask(taskId, dateString);
     };
 
-    const deleteTask = (taskId) => {
+    const deleteTask = (taskId, dateString = getTodayString()) => {
+        const taskToDelete = tasks.find(t => t.id === taskId);
+        if (taskToDelete && taskToDelete.recurring && taskToDelete.recurring !== 'none') {
+            // For recurring tasks, deleting from a specific day means excluding it
+            const updatedTasks = tasks.map(task => {
+                if (task.id === taskId) {
+                    const excludedDates = [...(task.excludedDates || [])];
+                    if (!excludedDates.includes(dateString)) {
+                        excludedDates.push(dateString);
+                    }
+                    return { ...task, excludedDates };
+                }
+                return task;
+            });
+            setTasks(updatedTasks);
+            saveTasks(updatedTasks);
+        } else {
+            const updatedTasks = tasks.filter(t => t.id !== taskId);
+            setTasks(updatedTasks);
+            saveTasks(updatedTasks);
+        }
+    };
+
+    const deleteTaskSeries = (taskId) => {
         const updatedTasks = tasks.filter(t => t.id !== taskId);
         setTasks(updatedTasks);
         saveTasks(updatedTasks);
@@ -245,13 +288,28 @@ export const AppProvider = ({ children }) => {
 
     // Get today's tasks
     const getTodaysTasks = () => {
-        const today = getTodayString();
-        return tasks.filter(task => task.date === today);
+        return getTasksForDate(getTodayString());
     };
 
     // Get tasks for a specific date
-    const getTasksForDate = (dateString) => {
-        return tasks.filter(task => task.date === dateString);
+    const getTasksForDate = (dateString = getTodayString()) => {
+        return tasks.filter(task => {
+            // Handle non-recurring
+            if (!task.recurring || task.recurring === 'none') {
+                return task.date === dateString;
+            }
+
+            // Handle daily recurring
+            if (task.recurring === 'daily') {
+                // Task must have started on or before this date
+                const isStarted = task.date <= dateString;
+                // Task must not be excluded for this date
+                const isNotExcluded = !(task.excludedDates || []).includes(dateString);
+                return isStarted && isNotExcluded;
+            }
+
+            return false;
+        });
     };
 
     // Get completed tasks count for today
@@ -278,6 +336,7 @@ export const AppProvider = ({ children }) => {
         postponeTask,
         skipTask,
         deleteTask,
+        deleteTaskSeries,
         editTask,
         getTodaysTasks,
         getTodaysCompletedCount,

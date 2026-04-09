@@ -18,8 +18,24 @@ const DailyCalendar = ({ lightText = true }) => {
     };
 
     const getTasksForDate = (date) => {
-        const dateStr = new Date(date.getFullYear(), date.getMonth(), date.getDate()).toISOString().split('T')[0];
-        return tasks.filter(task => task.date && task.date.split('T')[0] === dateStr);
+        const dateStr = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0).toISOString();
+        return tasks.filter(task => {
+            // Non-recurring
+            if (!task.recurring || task.recurring === 'none') {
+                return task.date === dateStr;
+            }
+
+            // Daily recurring
+            if (task.recurring === 'daily') {
+                // Task must have started on or before this date
+                const isStarted = task.date <= dateStr;
+                // Task must not be excluded for this date
+                const isNotExcluded = !(task.excludedDates || []).includes(dateStr);
+                return isStarted && isNotExcluded;
+            }
+
+            return false;
+        });
     };
 
     const handleDateClick = (date) => {
@@ -90,8 +106,14 @@ const DailyCalendar = ({ lightText = true }) => {
                     const date = new Date(year, month, day);
                     const isToday = date.toDateString() === today;
                     const isSelected = date.toDateString() === selectedDateObj.toDateString();
+                    const dateStr = date.toISOString();
                     const tasksForDay = getTasksForDate(date);
-                    const completedTasks = tasksForDay.filter(t => t.completed).length;
+                    const completedTasks = tasksForDay.filter(t => {
+                        if (t.recurring && t.recurring !== 'none') {
+                            return (t.completedDates || []).includes(dateStr);
+                        }
+                        return t.completed;
+                    }).length;
                     const hasActivity = tasksForDay.length > 0;
                     const allCompleted = hasActivity && completedTasks === tasksForDay.length;
 

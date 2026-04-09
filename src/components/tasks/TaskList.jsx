@@ -9,12 +9,17 @@ import './Tasks.css';
 const TaskList = ({ lightText = false }) => {
     const { getTasksForDate, addTask, selectedDate, setSelectedDate } = useApp();
     const [newTask, setNewTask] = useState('');
+    const [isRecurring, setIsRecurring] = useState(false);
 
-    const selectedDateObj = new Date(selectedDate);
     const tasksForSelectedDate = getTasksForDate(selectedDate);
-    const completedCount = tasksForSelectedDate.filter(task => task.completed).length;
+    const completedCount = tasksForSelectedDate.filter(task => {
+        if (task.recurring && task.recurring !== 'none') {
+            return (task.completedDates || []).includes(selectedDate);
+        }
+        return task.completed;
+    }).length;
     const totalCount = tasksForSelectedDate.length;
-
+    const selectedDateObj = new Date(selectedDate);
     const isToday = selectedDateObj.toDateString() === new Date().toDateString();
     const dateLabel = isToday ? 'Today' : selectedDateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
@@ -24,17 +29,9 @@ const TaskList = ({ lightText = false }) => {
     const handleAddTask = (e) => {
         e.preventDefault();
         if (newTask.trim()) {
-            // Create task with selected date
-            const task = {
-                id: Date.now().toString(),
-                text: newTask.trim(),
-                completed: false,
-                createdAt: new Date().toISOString(),
-                completedAt: null,
-                date: selectedDate,
-            };
-            addTask(newTask.trim());
+            addTask(newTask.trim(), selectedDate, isRecurring ? 'daily' : 'none');
             setNewTask('');
+            setIsRecurring(false);
         }
     };
 
@@ -68,17 +65,31 @@ const TaskList = ({ lightText = false }) => {
                 )}
             </div>
 
-            <form onSubmit={handleAddTask} className="mb-12 flex gap-4">
-                <Input
-                    type="text"
-                    value={newTask}
-                    onChange={(e) => setNewTask(e.target.value)}
-                    placeholder="What's one small thing you want to do today?"
-                    className={`flex-1 !bg-white/10 backdrop-blur-md border-white/20 focus:border-white/40 ${lightText ? 'text-white placeholder:text-white/30' : 'text-slate-800'}`}
-                />
-                <Button type="submit" variant={lightText ? 'primary' : 'blush'} disabled={!newTask.trim()} className={lightText ? '!bg-white/20 !text-white' : ''}>
-                    Add
-                </Button>
+            <form onSubmit={handleAddTask} className="mb-12 flex flex-col gap-4">
+                <div className="flex gap-4">
+                    <Input
+                        type="text"
+                        value={newTask}
+                        onChange={(e) => setNewTask(e.target.value)}
+                        placeholder="What's one small thing you want to do today?"
+                        className={`flex-1 !bg-white/10 backdrop-blur-md border-white/20 focus:border-white/40 ${lightText ? 'text-white placeholder:text-white/30' : 'text-slate-800'}`}
+                    />
+                    <Button type="submit" variant={lightText ? 'primary' : 'blush'} disabled={!newTask.trim()} className={lightText ? '!bg-white/20 !text-white' : ''}>
+                        Add
+                    </Button>
+                </div>
+                <div className="flex items-center gap-2 px-2">
+                    <button
+                        type="button"
+                        onClick={() => setIsRecurring(!isRecurring)}
+                        className={`text-[10px] tracking-[0.2em] uppercase transition-all flex items-center gap-2 ${isRecurring ? 'text-cream-100' : 'text-cream-200/40'}`}
+                    >
+                        <div className={`w-3 h-3 rounded-full border border-white/20 flex items-center justify-center transition-all ${isRecurring ? 'bg-cream-100 border-cream-100' : ''}`}>
+                            {isRecurring && <div className="w-1.5 h-1.5 rounded-full bg-slate-800" />}
+                        </div>
+                        Repeat Daily
+                    </button>
+                </div>
             </form>
 
             <motion.div layout className="space-y-4">

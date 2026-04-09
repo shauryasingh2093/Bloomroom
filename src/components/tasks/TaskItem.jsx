@@ -4,20 +4,25 @@ import { useApp } from '../../context/appContextCore';
 import { getContextualEncouragement } from '../../utils/encouragement';
 
 const TaskItem = ({ task, lightText = false }) => {
-    const { completeTask, uncompleteTask, postponeTask, skipTask, editTask } = useApp();
+    const { completeTask, uncompleteTask, postponeTask, skipTask, editTask, deleteTaskSeries, selectedDate } = useApp();
     const [isEditing, setIsEditing] = useState(false);
     const [editText, setEditText] = useState(task.text);
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState('');
     const [isAnimating, setIsAnimating] = useState(false);
 
+    const isRecurring = task.recurring && task.recurring !== 'none';
+    const isCompleted = isRecurring
+        ? (task.completedDates || []).includes(selectedDate)
+        : task.completed;
+
     const textColor = lightText ? 'text-cream-50' : 'text-slate-800';
 
     const handleComplete = () => {
-        if (task.completed) {
-            uncompleteTask(task.id);
+        if (isCompleted) {
+            uncompleteTask(task.id, selectedDate);
         } else {
-            completeTask(task.id);
+            completeTask(task.id, selectedDate);
             setMessage(getContextualEncouragement('complete'));
             setShowMessage(true);
             setIsAnimating(true);
@@ -34,7 +39,7 @@ const TaskItem = ({ task, lightText = false }) => {
         setShowMessage(true);
 
         setTimeout(() => {
-            postponeTask(task.id);
+            postponeTask(task.id, selectedDate);
         }, 1500);
     };
 
@@ -43,7 +48,7 @@ const TaskItem = ({ task, lightText = false }) => {
         setShowMessage(true);
 
         setTimeout(() => {
-            skipTask(task.id);
+            skipTask(task.id, selectedDate);
         }, 1500);
     };
 
@@ -78,14 +83,14 @@ const TaskItem = ({ task, lightText = false }) => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className={`group relative p-6 rounded-2xl transition-all duration-700 ${task.completed ? 'bg-white/5 opacity-60' : 'bg-white/10 hover:bg-white/15'} border border-white/20 backdrop-blur-md ${isAnimating ? 'scale-[1.02] shadow-xl ring-2 ring-white/10' : ''}`}
+            className={`group relative p-6 rounded-2xl transition-all duration-700 ${isCompleted ? 'bg-white/5 opacity-60' : 'bg-white/10 hover:bg-white/15'} border border-white/20 backdrop-blur-md ${isAnimating ? 'scale-[1.02] shadow-xl ring-2 ring-white/10' : ''}`}
         >
             <div className="flex items-center gap-6">
                 <button
                     onClick={handleComplete}
-                    className={`w-6 h-6 rounded-full border-2 transition-all duration-500 flex items-center justify-center ${task.completed ? 'bg-white border-white' : 'border-white/30 hover:border-white/60'}`}
+                    className={`w-6 h-6 rounded-full border-2 transition-all duration-500 flex items-center justify-center ${isCompleted ? 'bg-white border-white' : 'border-white/30 hover:border-white/60'}`}
                 >
-                    {task.completed && (
+                    {isCompleted && (
                         <svg className={`w-4 h-4 ${lightText ? 'text-slate-800' : 'text-slate-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
@@ -104,17 +109,27 @@ const TaskItem = ({ task, lightText = false }) => {
                             autoFocus
                         />
                     ) : (
-                        <span
-                            className={`text-lg font-light tracking-wide transition-all duration-700 ${task.completed ? 'text-white/40 line-through' : textColor}`}
-                            onDoubleClick={() => !task.completed && setIsEditing(true)}
-                        >
-                            {task.text}
-                        </span>
+                        <div className="flex flex-col">
+                            <span
+                                className={`text-lg font-light tracking-wide transition-all duration-700 ${isCompleted ? 'text-white/40 line-through' : textColor}`}
+                                onDoubleClick={() => !isCompleted && setIsEditing(true)}
+                            >
+                                {task.text}
+                            </span>
+                            {isRecurring && (
+                                <div className="flex items-center gap-1 mt-1 opacity-40">
+                                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                    <span className="text-[10px] tracking-widest uppercase font-light">Daily</span>
+                                </div>
+                            )}
+                        </div>
                     )}
                 </div>
 
-                {!task.completed && (
-                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                {!isCompleted && (
+                    <div className="flex flex-wrap justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                         <button
                             className={`px-3 py-1 text-[10px] tracking-widest uppercase font-light border rounded-full transition-colors ${lightText ? 'text-white/60 border-white/20 hover:text-white hover:border-white/40' : 'text-slate-400 border-slate-200 hover:text-slate-600'}`}
                             onClick={handlePostpone}
@@ -127,6 +142,14 @@ const TaskItem = ({ task, lightText = false }) => {
                         >
                             Skip
                         </button>
+                        {isRecurring && (
+                            <button
+                                className={`px-3 py-1 text-[10px] tracking-widest uppercase font-light border border-red-500/30 text-red-400/60 hover:text-red-400 hover:bg-red-500/5 rounded-full transition-colors`}
+                                onClick={() => deleteTaskSeries(task.id)}
+                            >
+                                Remove All
+                            </button>
+                        )}
                     </div>
                 )}
             </div>
