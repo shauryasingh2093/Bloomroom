@@ -20,7 +20,6 @@ Bloomroom is an interactive wellness application that uses a **multi-room house 
 - 🏠 **6 Themed Rooms** - Planning, Calm, Future, Care, Memory, and Entry
 - 🌱 **Visual Growth Tracking** - Watch a plant/flower bloom as you complete goals
 - 📝 **Comprehensive Tools** - Tasks, calendar, breathing exercises, journaling, and more
-- 👤 **Multi-Profile Support** - Separate spaces for work, personal life, etc.
 - 💾 **Smart Data Sync** - Local-first with optional cloud backup via Supabase
 - 📱 **PWA Ready** - Install like a native app on any device
 - 🎨 **Premium Design** - Soft pastels, elegant typography, frosted glass UI
@@ -56,7 +55,6 @@ Bloomroom is an interactive wellness application that uses a **multi-room house 
 - ⚡ **Vite 7.2.4** - Lightning-fast build tool
 - 🎨 **Tailwind CSS 4.1.18** - Utility-first styling
 - 🎭 **Framer Motion 12.25.0** - Smooth animations
-- 🎬 **GSAP 3.14.2** - Advanced animation engine
 - 🧭 **React Router DOM 7.12.0** - Client-side routing
 - 📅 **date-fns 4.1.0** - Date utilities
 
